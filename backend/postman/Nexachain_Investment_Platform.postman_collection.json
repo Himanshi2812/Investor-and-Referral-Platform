@@ -1,0 +1,321 @@
+{
+  "info": {
+    "_postman_id": "e8d648f2-8921-4f12-9c32-b88301712a10",
+    "name": "Nexachain AI - Investment & Referral Platform API",
+    "description": "Production-grade REST API collection for MERN Stack Technical Assessment covering Auth, Multi-Tier Referrals, Investments, ROI Scheduler with Idempotency, and Dashboard Analytics.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register New User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"mobileNumber\": \"+1987654321\",\n  \"password\": \"password123\",\n  \"referralCode\": \"NXALICE1\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User (Sets Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "    pm.collectionVariables.set('token', res.data.token);",
+                  "    console.log('JWT Token successfully set in collection variables.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alice@nexachain.ai\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Deposit Mock Balance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/deposit",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "deposit"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Investment APIs",
+      "item": [
+        {
+          "name": "Get Available Investment Plans",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/investments/plans",
+              "host": ["{{baseUrl}}"],
+              "path": ["investments", "plans"]
+            }
+          }
+        },
+        {
+          "name": "Create Investment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"planId\": \"growth\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/investments",
+              "host": ["{{baseUrl}}"],
+              "path": ["investments"]
+            }
+          }
+        },
+        {
+          "name": "View User Investments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/investments?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["investments"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "Active", "disabled": true }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Dashboard APIs",
+      "item": [
+        {
+          "name": "Get Dashboard Metrics & Chart Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Referral APIs",
+      "item": [
+        {
+          "name": "Fetch Direct Referrals (Level 1)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/referrals/direct",
+              "host": ["{{baseUrl}}"],
+              "path": ["referrals", "direct"]
+            }
+          }
+        },
+        {
+          "name": "Fetch Complete Referral Tree",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/referrals/tree?depth=4",
+              "host": ["{{baseUrl}}"],
+              "path": ["referrals", "tree"],
+              "query": [
+                { "key": "depth", "value": "4" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Fetch Referral Income History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/referrals/history?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["referrals", "history"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. ROI & Scheduler APIs",
+      "item": [
+        {
+          "name": "Fetch ROI Payout History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/roi/history?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["roi", "history"]
+            }
+          }
+        },
+        {
+          "name": "Trigger Daily ROI On-Demand (Verify Idempotency)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dateString\": \"2026-10-29\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cron/trigger-daily-roi",
+              "host": ["{{baseUrl}}"],
+              "path": ["cron", "trigger-daily-roi"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
