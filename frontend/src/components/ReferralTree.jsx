@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 
 const TreeCard = ({ node, level = 0, defaultOpen = true }) => {
+  const { currentTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [copied, setCopied] = useState(false);
   const hasChildren = node.children && node.children.length > 0;
@@ -30,37 +31,32 @@ const TreeCard = ({ node, level = 0, defaultOpen = true }) => {
       case 0:
         return {
           title: 'Root Sponsor',
-          badge: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+          badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30',
           avatarBg: 'from-amber-500 to-orange-600',
-          border: 'border-amber-500/40 bg-gradient-to-r from-amber-950/20 via-gray-900 to-gray-900'
         };
       case 1:
         return {
           title: 'Level 1 (5% Comm.)',
-          badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+          badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
           avatarBg: 'from-emerald-500 to-teal-600',
-          border: 'border-emerald-500/30 bg-gray-900/90'
         };
       case 2:
         return {
           title: 'Level 2 (3% Comm.)',
-          badge: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+          badge: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30',
           avatarBg: 'from-blue-500 to-indigo-600',
-          border: 'border-blue-500/30 bg-gray-900/90'
         };
       case 3:
         return {
           title: 'Level 3 (1% Comm.)',
-          badge: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+          badge: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30',
           avatarBg: 'from-purple-500 to-pink-600',
-          border: 'border-purple-500/30 bg-gray-900/90'
         };
       default:
         return {
           title: `Level ${lvl}`,
-          badge: 'bg-gray-500/10 text-gray-400 border-gray-500/30',
+          badge: 'bg-gray-500/10 text-gray-500 border-gray-500/30',
           avatarBg: 'from-gray-600 to-gray-800',
-          border: 'border-gray-800 bg-gray-900'
         };
     }
   };
@@ -72,8 +68,12 @@ const TreeCard = ({ node, level = 0, defaultOpen = true }) => {
       {/* Node Card */}
       <div
         onClick={() => hasChildren && setIsOpen(!isOpen)}
-        className={`p-4 rounded-2xl border ${tier.border} shadow-lg transition-all duration-150 ${
-          hasChildren ? 'cursor-pointer hover:border-indigo-500/50' : ''
+        style={{
+          backgroundColor: currentTheme.card,
+          borderColor: level === 0 ? currentTheme.accent : currentTheme.border
+        }}
+        className={`p-4 rounded-2xl border shadow-md transition-all duration-150 ${
+          hasChildren ? 'cursor-pointer hover:opacity-90' : ''
         }`}
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -82,27 +82,34 @@ const TreeCard = ({ node, level = 0, defaultOpen = true }) => {
             <div
               className={`w-11 h-11 rounded-2xl bg-gradient-to-tr ${tier.avatarBg} p-0.5 shadow-md flex items-center justify-center shrink-0`}
             >
-              <div className="w-full h-full bg-gray-950/80 rounded-[14px] flex items-center justify-center text-white font-extrabold text-sm">
-                {node.fullName?.charAt(0) || 'U'}
+              <div
+                style={{ backgroundColor: currentTheme.card }}
+                className="w-full h-full rounded-[14px] flex items-center justify-center font-extrabold text-sm"
+              >
+                <span style={{ color: currentTheme.textPrimary }}>{node.fullName?.charAt(0) || 'U'}</span>
               </div>
             </div>
 
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-sm text-white">{node.fullName}</span>
+                <span className="font-bold text-sm" style={{ color: currentTheme.textPrimary }}>
+                  {node.fullName}
+                </span>
                 <span
                   className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${tier.badge}`}
                 >
                   {tier.title}
                 </span>
                 {node.accountStatus === 'Active' && (
-                  <span className="flex items-center text-[10px] font-medium text-emerald-400">
+                  <span className="flex items-center text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
                     <ShieldCheck className="w-3 h-3 mr-0.5" />
                     Active
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-400 font-mono mt-0.5">{node.email}</p>
+              <p className="text-xs font-mono mt-0.5" style={{ color: currentTheme.textSecondary }}>
+                {node.email}
+              </p>
             </div>
           </div>
 
@@ -112,22 +119,33 @@ const TreeCard = ({ node, level = 0, defaultOpen = true }) => {
             <button
               onClick={copyCode}
               title="Copy referral code"
-              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-gray-800 hover:bg-gray-750 border border-gray-700/80 text-xs font-mono transition"
+              style={{
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+                color: currentTheme.textPrimary
+              }}
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl border text-xs font-mono transition"
             >
-              <span className="text-[10px] text-gray-400">Code:</span>
-              <span className="font-bold text-indigo-300">{node.referralCode}</span>
+              <span className="text-[10px] opacity-70">Code:</span>
+              <span className="font-bold" style={{ color: currentTheme.accent }}>{node.referralCode}</span>
               {copied ? (
-                <Check className="w-3 h-3 text-emerald-400 ml-1" />
+                <Check className="w-3 h-3 text-emerald-500 ml-1" />
               ) : (
-                <Share2 className="w-3 h-3 text-gray-400 ml-1" />
+                <Share2 className="w-3 h-3 opacity-60 ml-1" />
               )}
             </button>
 
             {/* Total Invested */}
             {level > 0 && (
-              <div className="flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-gray-800/80 border border-gray-700/60">
-                <span className="text-[10px] text-gray-400">Invested:</span>
-                <span className="text-xs font-bold font-mono text-emerald-400">
+              <div
+                style={{
+                  backgroundColor: currentTheme.bg,
+                  borderColor: currentTheme.border
+                }}
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-xl border"
+              >
+                <span className="text-[10px] opacity-70" style={{ color: currentTheme.textSecondary }}>Invested:</span>
+                <span className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400">
                   ${Number(node.totalInvested || 0).toLocaleString()}
                 </span>
               </div>
@@ -135,7 +153,14 @@ const TreeCard = ({ node, level = 0, defaultOpen = true }) => {
 
             {/* Downlines Toggle */}
             {hasChildren && (
-              <div className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-indigo-600/10 text-indigo-300 border border-indigo-500/20 text-xs font-semibold">
+              <div
+                style={{
+                  backgroundColor: currentTheme.accent + '15',
+                  borderColor: currentTheme.accent + '30',
+                  color: currentTheme.accent
+                }}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-xl border text-xs font-bold"
+              >
                 <span>{node.children.length} {node.children.length === 1 ? 'downline' : 'downlines'}</span>
                 {isOpen ? (
                   <ChevronDown className="w-3.5 h-3.5 ml-1" />

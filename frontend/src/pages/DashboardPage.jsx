@@ -163,12 +163,20 @@ export const DashboardPage = () => {
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-black text-white">Investment Portfolio</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">Active contracts earning daily automated yields</p>
+                  <h2
+                    className="text-xl font-black"
+                    style={{ color: currentTheme.textPrimary }}
+                  >
+                    Investment Portfolio
+                  </h2>
+                  <p className="text-xs mt-0.5" style={{ color: currentTheme.textSecondary }}>
+                    Active contracts earning daily automated yields
+                  </p>
                 </div>
                 <button
                   onClick={() => setIsInvestModalOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition"
+                  style={{ backgroundColor: currentTheme.accent }}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-white transition hover:opacity-90 shadow-md"
                 >
                   + Activate New Plan
                 </button>
@@ -185,8 +193,15 @@ export const DashboardPage = () => {
           {activeTab === 'roi' && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <h2 className="text-xl font-black text-white">Daily ROI Payouts</h2>
-                <p className="text-xs text-gray-400 mt-0.5">Verified daily returns credited automatically to your wallet</p>
+                <h2
+                  className="text-xl font-black"
+                  style={{ color: currentTheme.textPrimary }}
+                >
+                  Daily ROI Payouts
+                </h2>
+                <p className="text-xs mt-0.5" style={{ color: currentTheme.textSecondary }}>
+                  Verified daily returns credited automatically to your wallet
+                </p>
               </div>
               <RoiTable roiHistory={roiHistory} loading={loading} />
             </div>
@@ -204,8 +219,13 @@ export const DashboardPage = () => {
           {activeTab === 'cron' && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <h2 className="text-xl font-black text-white">Cron Scheduler & Idempotency Testing Lab (Task 5)</h2>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <h2
+                  className="text-xl font-black"
+                  style={{ color: currentTheme.textPrimary }}
+                >
+                  Cron Scheduler & Idempotency Testing Lab (Task 5)
+                </h2>
+                <p className="text-xs mt-0.5" style={{ color: currentTheme.textSecondary }}>
                   Automated background job running every midnight at 12:00 AM (0 0 * * *). Test and verify idempotency live below.
                 </p>
               </div>
