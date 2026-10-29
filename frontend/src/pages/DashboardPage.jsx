@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
-import { Navbar } from '../components/Navbar';
+import { Sidebar } from '../components/Sidebar';
+import { Header } from '../components/Header';
 import { DashboardCards } from '../components/DashboardCards';
 import { EarningsChart } from '../components/EarningsChart';
 import { InvestmentTable } from '../components/InvestmentTable';
@@ -11,12 +12,12 @@ import { ReferralTree } from '../components/ReferralTree';
 import { CronSimulator } from '../components/CronSimulator';
 import { InvestmentModal } from '../components/InvestmentModal';
 import { DepositModal } from '../components/DepositModal';
-import { Landmark, TrendingUp, Users, GitBranch, RefreshCw } from 'lucide-react';
+import { RefreshCw, TrendingUp, Sparkles, Clock } from 'lucide-react';
 
 export const DashboardPage = () => {
   const { user, refreshProfile } = useAuth();
 
-  const [activeTab, setActiveTab] = useState('investments');
+  const [activeTab, setActiveTab] = useState('overview'); // overview, investments, roi, network, cron
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const [investments, setInvestments] = useState([]);
@@ -60,123 +61,139 @@ export const DashboardPage = () => {
     await fetchAllData();
   };
 
-  const tabs = [
-    { id: 'investments', label: 'Investments', icon: Landmark, count: investments.length },
-    { id: 'roi', label: 'Daily ROI History', icon: TrendingUp, count: roiHistory.length },
-    { id: 'referrals', label: 'Referral Income', icon: Users, count: referralHistory.length },
-    { id: 'tree', label: 'Referral Network Tree', icon: GitBranch }
-  ];
-
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-gray-100 flex flex-col selection:bg-indigo-600 selection:text-white">
-      {/* Top Navigation */}
-      <Navbar
-        onOpenDeposit={() => setIsDepositModalOpen(true)}
-        onOpenInvest={() => setIsInvestModalOpen(true)}
-      />
+    <div className="min-h-screen bg-[#0A0D14] text-gray-100 flex selection:bg-indigo-600 selection:text-white">
+      {/* 1. Left Sidebar Navigation */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Welcome Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
-              Welcome back, {user?.fullName}!
-            </h1>
-            <p className="text-xs text-gray-400 mt-1">
-              Real-time portfolio analytics, active contracts, and multi-tier affiliate earnings
-            </p>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={fetchAllData}
-              disabled={loading}
-              className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gray-800 hover:bg-gray-750 text-gray-300 border border-gray-700 text-xs font-medium transition"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-indigo-400' : ''}`} />
-              <span>Refresh</span>
-            </button>
-            <button
-              onClick={() => setIsInvestModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition"
-            >
-              + New Investment
-            </button>
-          </div>
-        </div>
-
-        {/* Task 5: Automated Scheduler Console */}
-        <CronSimulator onJobExecuted={handleActionComplete} />
-
-        {/* Task 4: Metric Cards */}
-        <DashboardCards
-          cards={dashboardData?.cards}
-          onInvestClick={() => setIsInvestModalOpen(true)}
-          onDepositClick={() => setIsDepositModalOpen(true)}
+      {/* 2. Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header
+          onOpenDeposit={() => setIsDepositModalOpen(true)}
+          onOpenInvest={() => setIsInvestModalOpen(true)}
         />
 
-        {/* Task 4: Earnings Analytics Chart */}
-        <EarningsChart data={dashboardData?.charts?.earningsChartData || []} />
-
-        {/* Tab Navigation for Tables & Network Tree */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2 border-b border-gray-800 pb-2 overflow-x-auto">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                    isActive
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                      : 'bg-gray-900/60 text-gray-400 hover:text-gray-200 hover:bg-gray-800/60'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
-                  {tab.count !== undefined && (
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                        isActive ? 'bg-indigo-700 text-white' : 'bg-gray-800 text-gray-400'
-                      }`}
-                    >
-                      {tab.count}
+        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto space-y-8">
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <div className="space-y-8 animate-fade-in">
+              {/* Welcome Banner */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h1 className="text-2xl font-black tracking-tight text-white font-sans">
+                      Portfolio Overview
+                    </h1>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-semibold">
+                      Live
                     </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Welcome back, <strong className="text-white">{user?.fullName}</strong>. Real-time contracts, daily ROI, and multi-tier network commissions.
+                  </p>
+                </div>
 
-          {/* Active Tab View */}
-          <div className="transition duration-150">
-            {activeTab === 'investments' && (
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={fetchAllData}
+                    disabled={loading}
+                    className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-gray-900 border border-gray-800 hover:border-gray-700 text-xs font-semibold text-gray-300 transition"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-indigo-400' : ''}`} />
+                    <span>Sync</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsInvestModalOpen(true)}
+                    className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 transition transform active:scale-95"
+                  >
+                    <TrendingUp className="w-4 h-4" />
+                    <span>+ New Contract</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Task 5: Cron Job Testing Widget */}
+              <CronSimulator onJobExecuted={handleActionComplete} />
+
+              {/* Task 4: Metric Cards */}
+              <DashboardCards
+                cards={dashboardData?.cards}
+                onInvestClick={() => setIsInvestModalOpen(true)}
+                onDepositClick={() => setIsDepositModalOpen(true)}
+              />
+
+              {/* Task 4: Recharts Earnings Analytics */}
+              <EarningsChart data={dashboardData?.charts?.earningsChartData || []} />
+
+              {/* Active Portfolio Preview */}
               <InvestmentTable
                 investments={investments}
                 loading={loading}
                 onInvestClick={() => setIsInvestModalOpen(true)}
               />
-            )}
+            </div>
+          )}
 
-            {activeTab === 'roi' && (
+          {/* Investments Tab */}
+          {activeTab === 'investments' && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-black text-white">Investment Portfolio</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">Active contracts earning daily automated yields</p>
+                </div>
+                <button
+                  onClick={() => setIsInvestModalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition"
+                >
+                  + Activate New Plan
+                </button>
+              </div>
+              <InvestmentTable
+                investments={investments}
+                loading={loading}
+                onInvestClick={() => setIsInvestModalOpen(true)}
+              />
+            </div>
+          )}
+
+          {/* Daily ROI Tab */}
+          {activeTab === 'roi' && (
+            <div className="space-y-6 animate-fade-in">
+              <div>
+                <h2 className="text-xl font-black text-white">Daily ROI Payouts</h2>
+                <p className="text-xs text-gray-400 mt-0.5">Verified daily returns credited automatically to your wallet</p>
+              </div>
               <RoiTable roiHistory={roiHistory} loading={loading} />
-            )}
+            </div>
+          )}
 
-            {activeTab === 'referrals' && (
-              <ReferralTable referralHistory={referralHistory} loading={loading} />
-            )}
-
-            {activeTab === 'tree' && (
+          {/* Referral Network Tab */}
+          {activeTab === 'network' && (
+            <div className="space-y-8 animate-fade-in">
               <ReferralTree treeData={treeData} onRefresh={fetchAllData} />
-            )}
-          </div>
-        </div>
-      </main>
+              <ReferralTable referralHistory={referralHistory} loading={loading} />
+            </div>
+          )}
 
-      {/* Modals */}
+          {/* Scheduler Console Tab */}
+          {activeTab === 'cron' && (
+            <div className="space-y-6 animate-fade-in">
+              <div>
+                <h2 className="text-xl font-black text-white">Cron Scheduler & Idempotency Testing Lab (Task 5)</h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Automated background job running every midnight at 12:00 AM (0 0 * * *). Test and verify idempotency live below.
+                </p>
+              </div>
+              <CronSimulator onJobExecuted={handleActionComplete} />
+              <RoiTable roiHistory={roiHistory} loading={loading} />
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* Interactive Modals */}
       <InvestmentModal
         isOpen={isInvestModalOpen}
         onClose={() => setIsInvestModalOpen(false)}

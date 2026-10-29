@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { TrendingUp, Lock, Mail, ArrowRight, AlertCircle, KeyRound } from 'lucide-react';
+import { TrendingUp, Lock, Mail, ArrowRight, AlertCircle, KeyRound, Sparkles } from 'lucide-react';
 
 export const LoginPage = ({ onSwitchToRegister }) => {
   const { login } = useAuth();
@@ -28,54 +28,58 @@ export const LoginPage = ({ onSwitchToRegister }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background ambient orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#080B11] flex items-center justify-center p-4 relative overflow-hidden select-none">
+      {/* Dynamic Ambient Background Glows */}
+      <div className="absolute top-1/4 -left-20 w-[450px] h-[450px] bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-[450px] h-[450px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-3xl p-8 shadow-2xl relative z-10">
+      <div className="w-full max-w-md bg-[#101524]/90 backdrop-blur-2xl border border-gray-800/90 rounded-3xl p-8 shadow-2xl relative z-10">
+        {/* Brand */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-600/30 mb-4">
-            <TrendingUp className="w-8 h-8 text-white" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-emerald-400 p-0.5 shadow-xl shadow-indigo-600/25 mb-4">
+            <div className="w-full h-full bg-[#101524] rounded-[14px] flex items-center justify-center">
+              <Sparkles className="w-7 h-7 text-indigo-400" />
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">NEXACHAIN AI</h1>
-          <p className="text-xs text-gray-400 mt-1">Investment & Multi-Tier Referral Platform</p>
+          <h1 className="text-2xl font-black text-white tracking-tight">NEXACHAIN AI</h1>
+          <p className="text-xs text-gray-400 mt-1">Institutional Investment & Multi-Tier Referral Platform</p>
         </div>
 
         {error && (
-          <div className="flex items-center space-x-2 p-3.5 mb-6 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+          <div className="flex items-center space-x-2.5 p-3.5 mb-5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-gray-300">Email Address</label>
+            <label className="text-xs font-bold text-gray-300">Email Address</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+              <Mail className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="alice@nexachain.ai"
-                className="w-full bg-gray-800/80 border border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition"
+                className="w-full bg-gray-900/90 border border-gray-800 rounded-xl pl-10 pr-4 py-3 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition shadow-inner"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-gray-300">Password</label>
+            <label className="text-xs font-bold text-gray-300">Password</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+              <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-gray-800/80 border border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition"
+                className="w-full bg-gray-900/90 border border-gray-800 rounded-xl pl-10 pr-4 py-3 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition shadow-inner"
               />
             </div>
           </div>
@@ -83,46 +87,49 @@ export const LoginPage = ({ onSwitchToRegister }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 mt-2"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 disabled:opacity-50 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 mt-2 transform active:scale-95"
           >
-            <span>{loading ? 'Authenticating...' : 'Sign In to Dashboard'}</span>
+            <span>{loading ? 'Authenticating Secure Session...' : 'Sign In to Dashboard'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        {/* 1-Click Demo Logins for Evaluator Convenience */}
-        <div className="mt-8 pt-6 border-t border-gray-800">
-          <div className="flex items-center space-x-1.5 text-xs text-gray-400 mb-3">
+        {/* Evaluator Quick 1-Click Fill */}
+        <div className="mt-8 pt-6 border-t border-gray-800/80">
+          <div className="flex items-center space-x-2 text-xs text-gray-400 mb-3">
             <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="font-semibold text-gray-300">Quick 1-Click Evaluator Logins:</span>
+            <span className="font-bold text-gray-300 text-[11px] uppercase tracking-wider">
+              Quick 1-Click Evaluator Logins:
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
               onClick={() => handleDemoFill('alice@nexachain.ai')}
               type="button"
-              className="p-2 rounded-xl bg-gray-800 hover:bg-gray-750 border border-gray-700/80 text-left hover:border-indigo-500 transition"
+              className="p-2.5 rounded-xl bg-gray-900/80 hover:bg-gray-800 border border-gray-800 hover:border-indigo-500/50 text-left transition shadow-sm"
             >
-              <div className="font-semibold text-gray-200">Alice (Root Sponsor)</div>
-              <div className="text-[10px] text-gray-400">Has 3 tiers of referrals</div>
+              <div className="font-bold text-white text-xs">Alice (Root Sponsor)</div>
+              <div className="text-[10px] text-emerald-400 font-medium">3 Tiers Downlines</div>
             </button>
+
             <button
               onClick={() => handleDemoFill('bob@nexachain.ai')}
               type="button"
-              className="p-2 rounded-xl bg-gray-800 hover:bg-gray-750 border border-gray-700/80 text-left hover:border-indigo-500 transition"
+              className="p-2.5 rounded-xl bg-gray-900/80 hover:bg-gray-800 border border-gray-800 hover:border-indigo-500/50 text-left transition shadow-sm"
             >
-              <div className="font-semibold text-gray-200">Bob (Level 1)</div>
-              <div className="text-[10px] text-gray-400">Referred by Alice</div>
+              <div className="font-bold text-white text-xs">Bob (Level 1)</div>
+              <div className="text-[10px] text-indigo-400 font-medium">Referred by Alice</div>
             </button>
           </div>
         </div>
 
         <div className="mt-6 text-center text-xs text-gray-400">
-          Don't have an account?{' '}
+          Need a new account?{' '}
           <button
             onClick={onSwitchToRegister}
-            className="text-indigo-400 hover:text-indigo-300 font-semibold underline underline-offset-2 ml-1"
+            className="text-indigo-400 hover:text-indigo-300 font-bold underline underline-offset-2 ml-1"
           >
-            Create an Account
+            Register Here
           </button>
         </div>
       </div>
