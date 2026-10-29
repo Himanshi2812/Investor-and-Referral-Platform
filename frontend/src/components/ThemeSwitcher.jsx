@@ -33,7 +33,7 @@ export const ThemeSwitcher = () => {
           color: currentTheme.textPrimary
         }}
       >
-        <Palette className="w-4 h-4" style={{ color: currentTheme.accent }} />
+        <Palette className="w-4 h-4 transition-transform hover:rotate-12" style={{ color: currentTheme.accent }} />
         <span
           className={`absolute bottom-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900 ${currentTheme.dot}`}
         />
