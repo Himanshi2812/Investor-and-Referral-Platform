@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import api from '../api/client';
 import { Sidebar } from '../components/Sidebar';
 import { Header } from '../components/Header';
@@ -16,6 +17,7 @@ import { RefreshCw, TrendingUp, Sparkles, Clock } from 'lucide-react';
 
 export const DashboardPage = () => {
   const { user, refreshProfile } = useAuth();
+  const { currentTheme } = useTheme();
 
   const [activeTab, setActiveTab] = useState('overview'); // overview, investments, roi, network, cron
   const [loading, setLoading] = useState(true);
@@ -62,7 +64,12 @@ export const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0D14] text-gray-100 flex selection:bg-indigo-600 selection:text-white">
+    <div
+      style={{
+        backgroundColor: currentTheme.bg
+      }}
+      className="min-h-screen text-gray-100 flex selection:bg-indigo-600 selection:text-white transition-colors duration-300"
+    >
       {/* 1. Left Sidebar Navigation */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 

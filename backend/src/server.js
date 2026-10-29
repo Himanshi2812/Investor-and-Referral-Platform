@@ -67,6 +67,11 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root welcome & API redirect
+app.get('/', (req, res) => {
+  res.redirect('/api/docs');
+});
+
 // Mount API Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/investments', investmentRoutes);

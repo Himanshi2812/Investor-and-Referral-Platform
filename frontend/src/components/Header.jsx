@@ -10,9 +10,12 @@ import {
   Bell,
   Sparkles
 } from 'lucide-react';
+import { ThemeSwitcher } from './ThemeSwitcher';
+import { useTheme } from '../context/ThemeContext';
 
 export const Header = ({ onOpenDeposit, onOpenInvest }) => {
   const { user } = useAuth();
+  const { currentTheme } = useTheme();
   const [copied, setCopied] = useState(false);
 
   const copyReferral = () => {
@@ -25,7 +28,13 @@ export const Header = ({ onOpenDeposit, onOpenInvest }) => {
   };
 
   return (
-    <header className="h-18 px-8 bg-[#0F1422]/90 backdrop-blur-md border-b border-gray-800/80 flex items-center justify-between sticky top-0 z-20">
+    <header
+      style={{
+        backgroundColor: currentTheme.sidebar + 'EE',
+        borderColor: currentTheme.border
+      }}
+      className="h-18 px-8 backdrop-blur-md border-b flex items-center justify-between sticky top-0 z-20 transition-colors duration-300"
+    >
       {/* Search Input */}
       <div className="relative w-72 hidden md:block">
         <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
@@ -38,6 +47,9 @@ export const Header = ({ onOpenDeposit, onOpenInvest }) => {
 
       {/* Action Badges */}
       <div className="flex items-center space-x-3.5 ml-auto">
+        {/* Dynamic Theme Palette Switcher */}
+        <ThemeSwitcher />
+
         {/* Copy Referral Code */}
         <button
           onClick={copyReferral}

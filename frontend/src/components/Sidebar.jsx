@@ -11,9 +11,11 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const Sidebar = ({ activeTab, setActiveTab }) => {
   const { user, logout } = useAuth();
+  const { currentTheme } = useTheme();
 
   const navItems = [
     { id: 'overview', label: 'Dashboard Overview', icon: LayoutDashboard },
@@ -24,7 +26,13 @@ export const Sidebar = ({ activeTab, setActiveTab }) => {
   ];
 
   return (
-    <aside className="w-64 bg-[#0F1422] border-r border-gray-800/80 flex flex-col justify-between shrink-0 h-screen sticky top-0 z-30 select-none">
+    <aside
+      style={{
+        backgroundColor: currentTheme.sidebar,
+        borderColor: currentTheme.border
+      }}
+      className="w-64 border-r flex flex-col justify-between shrink-0 h-screen sticky top-0 z-30 select-none transition-colors duration-300"
+    >
       {/* Brand Header */}
       <div>
         <div className="p-6 pb-5 flex items-center space-x-3 border-b border-gray-800/80">
