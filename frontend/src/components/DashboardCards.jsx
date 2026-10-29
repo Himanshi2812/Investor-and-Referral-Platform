@@ -1,7 +1,9 @@
 import React from 'react';
 import { Landmark, TrendingUp, Users, Wallet, ArrowUpRight, Sparkles } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 export const DashboardCards = ({ cards, onInvestClick, onDepositClick }) => {
+  const { currentTheme } = useTheme();
   const metricList = [
     {
       title: 'Total Active Investments',
@@ -52,32 +54,46 @@ export const DashboardCards = ({ cards, onInvestClick, onDepositClick }) => {
         return (
           <div
             key={idx}
-            className="relative overflow-hidden bg-[#111726]/90 border border-gray-800/80 hover:border-indigo-500/40 rounded-2xl p-5 shadow-xl transition-all duration-200 group"
+            style={{
+              backgroundColor: currentTheme.card,
+              borderColor: currentTheme.border
+            }}
+            className="relative overflow-hidden border rounded-2xl p-5 shadow-lg transition-all duration-200 group hover:scale-[1.01]"
           >
             {/* Ambient Background Gradient Flare */}
             <div
-              className={`absolute -right-8 -bottom-8 w-28 h-28 rounded-full bg-gradient-to-tr ${metric.glow} blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-300`}
+              className={`absolute -right-8 -bottom-8 w-28 h-28 rounded-full bg-gradient-to-tr ${metric.glow} blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-300 opacity-40`}
             />
 
             {/* Header: Title & Icon */}
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold text-gray-400 tracking-wider uppercase">
+              <span
+                style={{ color: currentTheme.textSecondary }}
+                className="text-[11px] font-bold tracking-wider uppercase"
+              >
                 {metric.title}
               </span>
               <div
-                className={`w-9 h-9 rounded-xl ${metric.iconBg} flex items-center justify-center text-white shadow-md shadow-black/50 group-hover:scale-105 transition`}
+                style={{ backgroundColor: currentTheme.accent }}
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-105 transition"
               >
                 <IconComponent className="w-4 h-4" />
               </div>
             </div>
 
             {/* Metric Value */}
-            <div className="text-2xl font-black font-mono tracking-tight text-white my-1">
+            <div
+              style={{ color: currentTheme.textPrimary }}
+              className="text-2xl font-black font-mono tracking-tight my-1"
+            >
               {metric.value}
             </div>
 
             {/* Footer: Badge & Action */}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-800/60 mt-3">
+            <div
+              style={{ borderColor: currentTheme.border }}
+              className="flex items-center justify-between pt-2 border-t mt-3"
+            >
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${metric.badgeColor}`}
               >
@@ -86,7 +102,8 @@ export const DashboardCards = ({ cards, onInvestClick, onDepositClick }) => {
               {metric.action && (
                 <button
                   onClick={metric.action}
-                  className="inline-flex items-center text-[11px] font-bold text-indigo-400 hover:text-indigo-300 transition"
+                  style={{ color: currentTheme.accent }}
+                  className="inline-flex items-center text-[11px] font-bold hover:opacity-80 transition"
                 >
                   <span>{metric.actionLabel}</span>
                   <ArrowUpRight className="w-3 h-3 ml-0.5" />

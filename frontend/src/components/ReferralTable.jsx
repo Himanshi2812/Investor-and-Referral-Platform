@@ -1,37 +1,50 @@
 import React from 'react';
 import { Users, CheckCircle } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 export const ReferralTable = ({ referralHistory = [], loading = false }) => {
-  const getLevelBadge = (level) => {
-    switch (level) {
-      case 1:
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-      case 2:
-        return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 3:
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-      default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
-    }
-  };
+  const { currentTheme } = useTheme();
 
   return (
-    <div className="bg-gray-900/90 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
-      <div className="p-5 border-b border-gray-800 flex items-center justify-between">
+    <div
+      style={{
+        backgroundColor: currentTheme.card,
+        borderColor: currentTheme.border
+      }}
+      className="border rounded-2xl shadow-lg overflow-hidden transition-colors"
+    >
+      <div
+        style={{ borderColor: currentTheme.border }}
+        className="p-5 border-b flex items-center justify-between"
+      >
         <div className="flex items-center space-x-2.5">
-          <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+          <div
+            style={{ backgroundColor: currentTheme.accent + '15', color: currentTheme.accent }}
+            className="p-2 rounded-xl"
+          >
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-white">Referral & Level Income History</h3>
-            <p className="text-xs text-gray-400">Multi-level network commissions credited into your wallet</p>
+            <h3 className="text-base font-bold" style={{ color: currentTheme.textPrimary }}>
+              Referral & Level Income History
+            </h3>
+            <p className="text-xs" style={{ color: currentTheme.textSecondary }}>
+              Multi-level network commissions credited into your wallet
+            </p>
           </div>
         </div>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-gray-950/50 text-gray-400 border-b border-gray-800 uppercase tracking-wider text-[10px]">
+          <thead
+            style={{
+              backgroundColor: currentTheme.bg,
+              borderColor: currentTheme.border,
+              color: currentTheme.textSecondary
+            }}
+            className="border-b uppercase tracking-wider text-[10px] font-bold"
+          >
             <tr>
               <th className="px-5 py-3.5">Credit Date</th>
               <th className="px-5 py-3.5">Downline Member</th>
@@ -41,7 +54,10 @@ export const ReferralTable = ({ referralHistory = [], loading = false }) => {
               <th className="px-5 py-3.5 text-right">Commission Earned</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800/60 font-sans">
+          <tbody
+            style={{ color: currentTheme.textPrimary }}
+            className="divide-y divide-gray-500/10 font-sans"
+          >
             {loading ? (
               <tr>
                 <td colSpan="6" className="text-center py-10 text-gray-400">

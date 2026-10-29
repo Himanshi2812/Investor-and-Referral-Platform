@@ -22,19 +22,20 @@ export const ThemeSwitcher = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border transition text-xs font-semibold shadow-sm"
+        className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border transition text-xs font-bold shadow-sm"
         style={{
           backgroundColor: currentTheme.card,
-          borderColor: currentTheme.border
+          borderColor: currentTheme.border,
+          color: currentTheme.textPrimary
         }}
       >
-        <Palette className="w-3.5 h-3.5 text-gray-400" />
-        <span className="hidden sm:inline text-gray-300">Theme:</span>
+        <Palette className="w-3.5 h-3.5 opacity-70" style={{ color: currentTheme.accent }} />
+        <span className="hidden sm:inline opacity-75 font-medium">Theme:</span>
         <span className="flex items-center space-x-1.5">
           <span className={`w-2.5 h-2.5 rounded-full ${currentTheme.dot}`}></span>
-          <span className="text-white">{currentTheme.name.split(' (')[0]}</span>
+          <span>{currentTheme.name.split(' (')[0]}</span>
         </span>
-        <ChevronDown className="w-3 h-3 text-gray-400" />
+        <ChevronDown className="w-3 h-3 opacity-60" />
       </button>
 
       {isOpen && (
@@ -42,11 +43,15 @@ export const ThemeSwitcher = () => {
           className="absolute right-0 mt-2 w-72 rounded-2xl border p-2 shadow-2xl z-50 animate-fade-in backdrop-blur-2xl"
           style={{
             backgroundColor: currentTheme.card,
-            borderColor: currentTheme.border
+            borderColor: currentTheme.border,
+            color: currentTheme.textPrimary
           }}
         >
-          <div className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-gray-400 border-b border-gray-800/80 mb-1">
-            Choose Executive Theme Palette
+          <div
+            className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider border-b mb-1 opacity-70"
+            style={{ borderColor: currentTheme.border }}
+          >
+            Select Color Palette
           </div>
 
           <div className="space-y-1">
@@ -60,25 +65,34 @@ export const ThemeSwitcher = () => {
                     setIsOpen(false);
                   }}
                   className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left text-xs transition ${
-                    isSelected ? 'bg-gray-800/80 border border-indigo-500/40 text-white font-bold' : 'hover:bg-gray-800/40 text-gray-300'
+                    isSelected
+                      ? 'border font-extrabold shadow-sm'
+                      : 'hover:opacity-80 font-medium'
                   }`}
+                  style={{
+                    backgroundColor: isSelected ? t.bg : 'transparent',
+                    borderColor: isSelected ? t.accent : 'transparent',
+                    color: t.textPrimary
+                  }}
                 >
                   <div className="flex items-center space-x-3">
-                    {/* Color Swatch Dot */}
+                    {/* Swatch */}
                     <div
-                      className="w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 shadow-inner"
+                      className="w-6 h-6 rounded-lg border flex items-center justify-center shrink-0 shadow-sm"
                       style={{ backgroundColor: t.bg, borderColor: t.border }}
                     >
-                      <span className={`w-2 h-2 rounded-full ${t.dot}`}></span>
+                      <span className={`w-2.5 h-2.5 rounded-full ${t.dot}`}></span>
                     </div>
 
                     <div>
-                      <div className="font-semibold text-xs text-white">{t.name}</div>
-                      <div className="text-[10px] text-gray-400 font-mono">Accent: {t.accent}</div>
+                      <div className="font-bold text-xs">{t.name.split(' (')[0]}</div>
+                      <div className="text-[10px] opacity-70">
+                        {t.name.includes('(') ? t.name.split('(')[1].replace(')', '') : ''}
+                      </div>
                     </div>
                   </div>
 
-                  {isSelected && <Check className="w-4 h-4 text-emerald-400" />}
+                  {isSelected && <Check className="w-4 h-4 text-emerald-500" />}
                 </button>
               );
             })}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import {
   GitBranch,
   ChevronDown,
@@ -165,9 +166,14 @@ const TreeCard = ({ node, level = 0, defaultOpen = true }) => {
 };
 
 export const ReferralTree = ({ treeData, onRefresh }) => {
+  const { currentTheme } = useTheme();
+
   if (!treeData) {
     return (
-      <div className="bg-[#111726]/90 border border-gray-800 rounded-3xl p-10 text-center text-gray-400">
+      <div
+        style={{ backgroundColor: currentTheme.card, borderColor: currentTheme.border }}
+        className="border rounded-3xl p-10 text-center text-gray-400"
+      >
         <GitBranch className="w-10 h-10 mx-auto text-indigo-400 animate-pulse mb-3" />
         <p className="font-semibold text-sm">Loading multi-tier hierarchy...</p>
       </div>
@@ -177,16 +183,27 @@ export const ReferralTree = ({ treeData, onRefresh }) => {
   const directCount = treeData.children ? treeData.children.length : 0;
 
   return (
-    <div className="bg-[#111726]/90 border border-gray-800/80 rounded-3xl p-6 shadow-2xl space-y-6">
+    <div
+      style={{ backgroundColor: currentTheme.card, borderColor: currentTheme.border }}
+      className="border rounded-3xl p-6 shadow-xl space-y-6 transition-colors"
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-gray-800/80 gap-3">
+      <div
+        style={{ borderColor: currentTheme.border }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b gap-3"
+      >
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+          <div
+            style={{ backgroundColor: currentTheme.accent + '15', color: currentTheme.accent }}
+            className="w-10 h-10 rounded-2xl flex items-center justify-center"
+          >
             <GitBranch className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-white">Multi-Tier Referral Network Tree</h3>
-            <p className="text-xs text-gray-400">
+            <h3 className="text-base font-extrabold" style={{ color: currentTheme.textPrimary }}>
+              Multi-Tier Referral Network Tree
+            </h3>
+            <p className="text-xs" style={{ color: currentTheme.textSecondary }}>
               Interactive upline and downline organization chart with automatic recursive commission distribution
             </p>
           </div>
