@@ -1,8 +1,8 @@
-# Nexachain Investment & Referral Platform
+# Investment & Referral Platform
 
 A full-stack MERN application implementing an investment contract system, 3-tier recursive referral commission distribution, an idempotent daily ROI cron scheduler, and a React management dashboard.
 
-This repository covers all five tasks specified in the Nexachain technical assessment.
+This repository covers all five tasks specified in the technical assessment.
 
 ---
 
@@ -54,7 +54,7 @@ This repository covers all five tasks specified in the Nexachain technical asses
 ## Repository Structure
 
 ```text
-nexachain-investment-platform/
+investor-referral-platform/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
