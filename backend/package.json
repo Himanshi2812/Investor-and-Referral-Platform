@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "dev": "node src/server.js",
     "seed": "node src/seed.js"
   },
   "keywords": [
@@ -30,8 +30,5 @@
     "mongoose": "^9.3.2",
     "morgan": "^1.10.1",
     "node-cron": "^4.2.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.15"
   }
 }

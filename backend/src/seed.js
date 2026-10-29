@@ -1,3 +1,8 @@
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {}
+
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
@@ -25,15 +30,12 @@ const seedData = async () => {
 
     console.log('[Seeder] Creating multi-tiered user network...');
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('password123', salt);
-
     // 1. Root / Sponsor User: Alice
     const alice = await User.create({
       fullName: 'Alice Johnson',
       email: 'alice@nexachain.ai',
       mobileNumber: '+1234567890',
-      password: hashedPassword,
+      password: 'password123',
       referralCode: 'NXALICE1',
       referredBy: null,
       walletBalance: 2450.5,
@@ -47,7 +49,7 @@ const seedData = async () => {
       fullName: 'Bob Smith',
       email: 'bob@nexachain.ai',
       mobileNumber: '+1234567891',
-      password: hashedPassword,
+      password: 'password123',
       referralCode: 'NXBOB222',
       referredBy: alice._id,
       walletBalance: 1200.0,
@@ -61,7 +63,7 @@ const seedData = async () => {
       fullName: 'Charlie Davis',
       email: 'charlie@nexachain.ai',
       mobileNumber: '+1234567892',
-      password: hashedPassword,
+      password: 'password123',
       referralCode: 'NXCHAR33',
       referredBy: bob._id,
       walletBalance: 850.0,
@@ -75,7 +77,7 @@ const seedData = async () => {
       fullName: 'David Wilson',
       email: 'david@nexachain.ai',
       mobileNumber: '+1234567893',
-      password: hashedPassword,
+      password: 'password123',
       referralCode: 'NXDAVE44',
       referredBy: charlie._id,
       walletBalance: 500.0,
@@ -89,7 +91,7 @@ const seedData = async () => {
       fullName: 'Emma Watson',
       email: 'emma@nexachain.ai',
       mobileNumber: '+1234567894',
-      password: hashedPassword,
+      password: 'password123',
       referralCode: 'NXEMMA55',
       referredBy: alice._id,
       walletBalance: 3200.0,

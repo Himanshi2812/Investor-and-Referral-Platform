@@ -102,6 +102,14 @@ exports.getDashboardStats = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       data: {
+        // Verbatim PDF specification requirements
+        totalInvestments: totalInvestmentsAmount,
+        totalRoiEarned: user.totalRoiEarned,
+        totalLevelIncomeEarned: user.totalLevelIncomeEarned,
+        walletBalance: user.walletBalance,
+        dailyRoi: Number(currentDailyRoiEstimate.toFixed(2)),
+
+        // Additional detailed analytics for dashboard UI
         cards: {
           totalInvestments: totalInvestmentsAmount,
           activeInvestments: activeInvestmentsAmount,

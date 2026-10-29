@@ -19,6 +19,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const referralRoutes = require('./routes/referralRoutes');
 const roiRoutes = require('./routes/roiRoutes');
 const cronRoutes = require('./routes/cronRoutes');
+const docsRoutes = require('./routes/docsRoutes');
 
 const app = express();
 
@@ -73,6 +74,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/referrals', referralRoutes);
 app.use('/api/v1/roi', roiRoutes);
 app.use('/api/v1/cron', cronRoutes);
+app.use('/api/docs', docsRoutes);
 
 // 404 Route Handler
 app.use((req, res) => {

@@ -41,9 +41,19 @@ const ReferralIncomeSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
+
+// Virtual getters matching exact PDF phrasing
+ReferralIncomeSchema.virtual('userWhoReceives').get(function () {
+  return this.recipientUser;
+});
+ReferralIncomeSchema.virtual('userWhoGenerated').get(function () {
+  return this.sourceUser;
+});
 
 // Indexes for query performance and preventing duplicate payouts for same investment & level
 ReferralIncomeSchema.index({ recipientUser: 1, date: -1 });
