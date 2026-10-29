@@ -8,24 +8,24 @@ export const InvestmentTable = ({ investments = [], loading = false, onInvestCli
     switch (status) {
       case 'Active':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
             <Clock className="w-3 h-3 mr-1" /> Active
           </span>
         );
       case 'Completed':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30">
             <CheckCircle className="w-3 h-3 mr-1" /> Completed
           </span>
         );
       case 'Cancelled':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/30">
             <XCircle className="w-3 h-3 mr-1" /> Cancelled
           </span>
         );
       default:
-        return <span className="text-gray-400 text-xs">{status}</span>;
+        return <span className="text-xs font-bold" style={{ color: currentTheme.textSecondary }}>{status}</span>;
     }
   };
 
@@ -96,36 +96,36 @@ export const InvestmentTable = ({ investments = [], loading = false, onInvestCli
           >
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-10 text-gray-400">
+                <td colSpan="7" className="text-center py-10" style={{ color: currentTheme.textSecondary }}>
                   Loading investments...
                 </td>
               </tr>
             ) : investments.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-12 text-gray-500">
-                  <p className="text-sm">No investment contracts found.</p>
+                <td colSpan="7" className="text-center py-12" style={{ color: currentTheme.textSecondary }}>
+                  <p className="text-sm font-semibold">No investment contracts found.</p>
                   <p className="text-xs mt-1">Activate an investment plan to start receiving daily ROI.</p>
                 </td>
               </tr>
             ) : (
               investments.map((inv) => (
-                <tr key={inv._id} className="hover:bg-gray-800/40 transition">
-                  <td className="px-5 py-4 font-semibold text-gray-200">
+                <tr key={inv._id} className="hover:opacity-85 transition">
+                  <td className="px-5 py-4 font-bold" style={{ color: currentTheme.textPrimary }}>
                     {inv.planDetails?.planName || 'Standard Plan'}
                   </td>
-                  <td className="px-5 py-4 font-mono font-bold text-white text-sm">
+                  <td className="px-5 py-4 font-mono font-black text-sm" style={{ color: currentTheme.textPrimary }}>
                     ${Number(inv.investmentAmount).toLocaleString()}
                   </td>
-                  <td className="px-5 py-4 font-mono font-semibold text-emerald-400">
+                  <td className="px-5 py-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">
                     +{inv.dailyRoiPercentage}% / day
                   </td>
-                  <td className="px-5 py-4 font-mono text-gray-300">
+                  <td className="px-5 py-4 font-mono font-semibold" style={{ color: currentTheme.textPrimary }}>
                     ${Number(inv.totalRoiPaid || 0).toFixed(2)}
                   </td>
-                  <td className="px-5 py-4 text-gray-400">
+                  <td className="px-5 py-4 font-medium" style={{ color: currentTheme.textSecondary }}>
                     {new Date(inv.startDate).toLocaleDateString()}
                   </td>
-                  <td className="px-5 py-4 text-gray-400">
+                  <td className="px-5 py-4 font-medium" style={{ color: currentTheme.textSecondary }}>
                     {new Date(inv.endDate).toLocaleDateString()}
                   </td>
                   <td className="px-5 py-4 text-right">

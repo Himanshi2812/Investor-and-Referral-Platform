@@ -59,34 +59,34 @@ export const RoiTable = ({ roiHistory = [], loading = false }) => {
           >
             {loading ? (
               <tr>
-                <td colSpan="5" className="text-center py-10 text-gray-400">
+                <td colSpan="5" className="text-center py-10" style={{ color: currentTheme.textSecondary }}>
                   Loading daily ROI records...
                 </td>
               </tr>
             ) : roiHistory.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-12 text-gray-500">
-                  <p className="text-sm">No ROI payouts recorded yet.</p>
+                <td colSpan="5" className="text-center py-12" style={{ color: currentTheme.textSecondary }}>
+                  <p className="text-sm font-semibold">No ROI payouts recorded yet.</p>
                   <p className="text-xs mt-1">Daily returns are processed automatically at midnight (or via the Cron Simulator).</p>
                 </td>
               </tr>
             ) : (
               roiHistory.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-800/40 transition">
-                  <td className="px-5 py-4 font-mono text-gray-300">
+                <tr key={item._id} className="hover:opacity-85 transition">
+                  <td className="px-5 py-4 font-mono font-medium" style={{ color: currentTheme.textSecondary }}>
                     {item.dateString || new Date(item.date).toLocaleDateString()}
                   </td>
-                  <td className="px-5 py-4 font-medium text-gray-200">
+                  <td className="px-5 py-4 font-bold" style={{ color: currentTheme.textPrimary }}>
                     {item.investment?.planDetails?.planName || 'Active Investment'} (${Number(item.investment?.investmentAmount || 0).toLocaleString()})
                   </td>
-                  <td className="px-5 py-4 font-mono font-semibold text-emerald-400">
+                  <td className="px-5 py-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">
                     {item.roiPercentage}%
                   </td>
-                  <td className="px-5 py-4 font-mono font-bold text-emerald-400 text-sm">
+                  <td className="px-5 py-4 font-mono font-black text-sm text-emerald-600 dark:text-emerald-400">
                     +${Number(item.roiAmount).toFixed(2)}
                   </td>
                   <td className="px-5 py-4 text-right">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                       <CheckCircle className="w-3 h-3 mr-1" /> {item.status || 'Credited'}
                     </span>
                   </td>

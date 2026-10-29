@@ -60,39 +60,48 @@ export const ReferralTable = ({ referralHistory = [], loading = false }) => {
           >
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center py-10 text-gray-400">
+                <td colSpan="6" className="text-center py-10" style={{ color: currentTheme.textSecondary }}>
                   Loading referral income records...
                 </td>
               </tr>
             ) : referralHistory.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-12 text-gray-500">
-                  <p className="text-sm">No referral commissions recorded yet.</p>
+                <td colSpan="6" className="text-center py-12" style={{ color: currentTheme.textSecondary }}>
+                  <p className="text-sm font-semibold">No referral commissions recorded yet.</p>
                   <p className="text-xs mt-1">Earn commissions instantly when direct and indirect referrals activate plans.</p>
                 </td>
               </tr>
             ) : (
               referralHistory.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-800/40 transition">
-                  <td className="px-5 py-4 font-mono text-gray-400">
+                <tr key={item._id} className="hover:opacity-85 transition">
+                  <td className="px-5 py-4 font-mono font-medium" style={{ color: currentTheme.textSecondary }}>
                     {new Date(item.date).toLocaleDateString()}
                   </td>
-                  <td className="px-5 py-4 font-medium text-gray-200">
+                  <td className="px-5 py-4 font-bold" style={{ color: currentTheme.textPrimary }}>
                     {item.sourceUser?.fullName || 'Downline Member'}
-                    <span className="block text-[10px] text-gray-400">{item.sourceUser?.email}</span>
+                    <span className="block text-[10px] font-normal" style={{ color: currentTheme.textSecondary }}>
+                      {item.sourceUser?.email}
+                    </span>
                   </td>
                   <td className="px-5 py-4">
-                    <span className={`inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${getLevelBadge(item.referralLevel)}`}>
+                    <span
+                      style={{
+                        backgroundColor: currentTheme.accent + '15',
+                        borderColor: currentTheme.accent + '30',
+                        color: currentTheme.accent
+                      }}
+                      className="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full border"
+                    >
                       Level {item.referralLevel}
                     </span>
                   </td>
-                  <td className="px-5 py-4 font-mono text-gray-300">
+                  <td className="px-5 py-4 font-mono font-bold" style={{ color: currentTheme.textPrimary }}>
                     ${Number(item.investment?.investmentAmount || 0).toLocaleString()}
                   </td>
-                  <td className="px-5 py-4 font-mono font-semibold text-purple-400">
+                  <td className="px-5 py-4 font-mono font-bold" style={{ color: currentTheme.accent }}>
                     {item.commissionPercentage}%
                   </td>
-                  <td className="px-5 py-4 font-mono font-bold text-emerald-400 text-sm text-right">
+                  <td className="px-5 py-4 font-mono font-black text-sm text-right text-emerald-600 dark:text-emerald-400">
                     +${Number(item.incomeAmount).toFixed(2)}
                   </td>
                 </tr>
