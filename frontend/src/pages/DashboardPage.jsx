@@ -88,15 +88,25 @@ export const DashboardPage = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h1 className="text-2xl font-black tracking-tight text-white font-sans">
+                    <h1
+                      className="text-2xl font-black tracking-tight font-sans"
+                      style={{ color: currentTheme.textPrimary }}
+                    >
                       Portfolio Overview
                     </h1>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-semibold">
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full border font-bold"
+                      style={{
+                        backgroundColor: currentTheme.accent + '15',
+                        borderColor: currentTheme.accent + '30',
+                        color: currentTheme.accent
+                      }}
+                    >
                       Live
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Welcome back, <strong className="text-white">{user?.fullName}</strong>. Real-time contracts, daily ROI, and multi-tier network commissions.
+                  <p className="text-xs mt-1" style={{ color: currentTheme.textSecondary }}>
+                    Welcome back, <strong style={{ color: currentTheme.textPrimary }}>{user?.fullName}</strong>. Real-time contracts, daily ROI, and multi-tier network commissions.
                   </p>
                 </div>
 
@@ -104,15 +114,21 @@ export const DashboardPage = () => {
                   <button
                     onClick={fetchAllData}
                     disabled={loading}
-                    className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-gray-900 border border-gray-800 hover:border-gray-700 text-xs font-semibold text-gray-300 transition"
+                    style={{
+                      backgroundColor: currentTheme.card,
+                      borderColor: currentTheme.border,
+                      color: currentTheme.textPrimary
+                    }}
+                    className="flex items-center space-x-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition hover:opacity-85 shadow-sm"
                   >
-                    <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-indigo-400' : ''}`} />
+                    <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} style={{ color: currentTheme.accent }} />
                     <span>Sync</span>
                   </button>
 
                   <button
                     onClick={() => setIsInvestModalOpen(true)}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 transition transform active:scale-95"
+                    style={{ backgroundColor: currentTheme.accent }}
+                    className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg transition transform active:scale-95 hover:opacity-90"
                   >
                     <TrendingUp className="w-4 h-4" />
                     <span>+ New Contract</span>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Play, ShieldCheck, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import api from '../api/client';
 
 export const CronSimulator = ({ onJobExecuted }) => {
+  const { currentTheme } = useTheme();
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState(null);
 
@@ -21,21 +23,37 @@ export const CronSimulator = ({ onJobExecuted }) => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-gray-900 via-indigo-950/40 to-gray-900 border border-indigo-500/30 rounded-2xl p-5 shadow-xl">
+    <div
+      style={{
+        backgroundColor: currentTheme.card,
+        borderColor: currentTheme.border
+      }}
+      className="border rounded-2xl p-5 shadow-lg transition-colors"
+    >
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center space-x-2">
-            <span className="p-1 rounded bg-indigo-500/20 text-indigo-400">
+            <span
+              className="p-1.5 rounded-lg"
+              style={{ backgroundColor: currentTheme.accent + '20', color: currentTheme.accent }}
+            >
               <Clock className="w-4 h-4" />
             </span>
-            <h4 className="text-sm font-bold text-white tracking-wide">
+            <h4 className="text-sm font-bold tracking-wide" style={{ color: currentTheme.textPrimary }}>
               Automated Scheduler & Idempotency Testing Console (Task 5)
             </h4>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+            <span
+              className="text-[10px] font-mono px-2 py-0.5 rounded border font-semibold"
+              style={{
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+                color: currentTheme.accent
+              }}
+            >
               0 0 * * * (12:00 AM)
             </span>
           </div>
-          <p className="text-xs text-gray-400 max-w-2xl">
+          <p className="text-xs max-w-2xl" style={{ color: currentTheme.textSecondary }}>
             Click to trigger the daily ROI calculation job. The backend uses compound indexing and transactional checks to guarantee that accidental double-executions NEVER credit ROI twice for the same day.
           </p>
         </div>
@@ -43,7 +61,8 @@ export const CronSimulator = ({ onJobExecuted }) => {
         <button
           onClick={handleRunCron}
           disabled={running}
-          className="shrink-0 flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition transform active:scale-95"
+          style={{ backgroundColor: currentTheme.accent }}
+          className="shrink-0 flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold shadow-md transition transform active:scale-95"
         >
           <Play className="w-4 h-4 fill-current" />
           <span>{running ? 'Executing Engine...' : 'Run Scheduled ROI Job Now'}</span>
@@ -51,29 +70,41 @@ export const CronSimulator = ({ onJobExecuted }) => {
       </div>
 
       {result && (
-        <div className="mt-4 pt-4 border-t border-indigo-500/20 animate-fade-in text-xs space-y-2">
+        <div
+          className="mt-4 pt-4 border-t animate-fade-in text-xs space-y-2"
+          style={{ borderColor: currentTheme.border }}
+        >
           <div className="flex flex-wrap items-center gap-3">
-            <span className="flex items-center text-emerald-400 font-semibold">
+            <span className="flex items-center text-emerald-500 font-bold">
               <CheckCircle2 className="w-4 h-4 mr-1.5" />
-              Date: <span className="font-mono ml-1 text-gray-200">{result.targetDate}</span>
+              Date: <span className="font-mono ml-1">{result.targetDate}</span>
             </span>
 
-            <span className="bg-gray-800 px-2.5 py-1 rounded-lg border border-gray-700">
-              Processed: <strong className="text-emerald-400 font-mono">{result.processedCount}</strong>
+            <span
+              style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.border }}
+              className="px-2.5 py-1 rounded-lg border font-medium"
+            >
+              Processed: <strong className="text-emerald-500 font-mono">{result.processedCount}</strong>
             </span>
 
-            <span className="bg-gray-800 px-2.5 py-1 rounded-lg border border-gray-700">
-              Skipped / Already Credited: <strong className="text-amber-400 font-mono">{result.skippedCount}</strong>
+            <span
+              style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.border }}
+              className="px-2.5 py-1 rounded-lg border font-medium"
+            >
+              Skipped / Already Credited: <strong className="text-amber-500 font-mono">{result.skippedCount}</strong>
             </span>
 
-            <span className="bg-gray-800 px-2.5 py-1 rounded-lg border border-gray-700">
-              Total Distributed: <strong className="text-white font-mono">${result.totalRoiDistributed}</strong>
+            <span
+              style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.border }}
+              className="px-2.5 py-1 rounded-lg border font-medium"
+            >
+              Total Distributed: <strong className="font-mono">${result.totalRoiDistributed}</strong>
             </span>
           </div>
 
           {result.skippedCount > 0 && result.processedCount === 0 && (
-            <div className="flex items-center space-x-2 text-amber-400/90 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl">
-              <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
+            <div className="flex items-center space-x-2 text-amber-600 bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-500" />
               <span>
                 <strong>Idempotency Safeguard Active:</strong> ROI for date {result.targetDate} has already been credited. Duplicate payout was successfully prevented!
               </span>
