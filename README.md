@@ -1,406 +1,348 @@
-# Nexachain AI — MERN Stack Technical Assessment
-### Production-Grade Investment & Multi-Tier Referral Platform Architecture
+# Nexachain Investment & Referral Platform
+
+A full-stack MERN application implementing an investment contract system, 3-tier recursive referral commission distribution, an idempotent daily ROI cron scheduler, and a React management dashboard.
+
+This repository covers all five tasks specified in the Nexachain technical assessment.
 
 ---
 
-## 📌 Executive Summary
+## Tech Stack
 
-This repository contains the complete, production-ready implementation of the **MERN Stack Technical Assessment** for **Nexachain AI**. Built by applying senior-level architectural design patterns, it delivers a scalable backend architecture, mathematical business logic engines with **ACID transactional consistency**, an **idempotent daily ROI scheduler**, and a modern, high-performance **React Fintech Dashboard**.
+- **Backend:** Node.js, Express.js, MongoDB (Atlas / Mongoose 9)
+- **Security & Validation:** JWT (JSON Web Tokens), Bcrypt.js, Helmet, Express Rate Limit, Joi
+- **Scheduler:** node-cron
+- **Testing:** Jest, Supertest
+- **Frontend:** React 18, Vite, Tailwind CSS, Lucide Icons, Recharts
 
 ---
 
-## 🏗️ Architectural Overview
+## System Architecture
 
+```text
++-----------------------------------------------------------+
+|                      React Frontend                       |
+|           (Vite + Tailwind CSS + Recharts UI)             |
++-----------------------------+-----------------------------+
+                              | Axios (Bearer Token)
+                              v
++-----------------------------------------------------------+
+|                   Express REST Gateway                    |
+|             (Helmet, CORS, IP Rate Limiter)               |
++--------------+--------------+--------------+--------------+
+               |              |              |
+               v              v              v
+     +-----------------+ +------------+ +-----------------+
+     | Auth Controller | | Investment | | Referral Engine |
+     |  (JWT & Bcrypt) | | Controller | |  (3-Tier Tree)  |
+     +-----------------+ +-----+------+ +--------+--------+
+                               |                 |
+                               v                 v
+     +----------------------------------------------------+
+     |             Daily ROI Cron Scheduler               |
+     |           (0 0 * * * - Calendar Idempotent)        |
+     +-------------------------+--------------------------+
+                               |
+                               v
+     +----------------------------------------------------+
+     |               MongoDB Atlas Database               |
+     |   (Compound Indexes: Idempotency & Query Speed)    |
+     +----------------------------------------------------+
 ```
-                                  ┌──────────────────────────┐
-                                  │      React Frontend      │
-                                  │  (Vite + Tailwind + UI)  │
-                                  └─────────────┬────────────┘
-                                                │ Axios (JWT Bearer)
-                                                ▼
-                                  ┌──────────────────────────┐
-                                  │   Express REST Gateway   │
-                                  │ (Helmet, CORS, RateLimit)│
-                                  └─────────────┬────────────┘
-                                                │
-                 ┌──────────────────────────────┼──────────────────────────────┐
-                 ▼                              ▼                              ▼
-     ┌───────────────────────┐      ┌───────────────────────┐      ┌───────────────────────┐
-     │  Authentication & ME  │      │  Investment Engine    │      │ Multi-Tier Referrals  │
-     │ (JWT, Bcrypt Salting) │      │ (ACID Wallet Updates) │      │ (Recursive Traversal) │
-     └───────────────────────┘      └───────────┬───────────┘      └───────────┬───────────┘
-                                                │                              │
-                                                ▼                              ▼
-                                    ┌───────────────────────┐      ┌───────────────────────┐
-                                    │ Idempotent ROI Cron   │      │ MongoDB Atlas / Local │
-                                    │ (node-cron @ midnight)│◄────►│  (Compound Indexes)   │
-                                    └───────────────────────┘      └───────────────────────┘
-```
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 nexachain-investment-platform/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
-│   │   │   ├── constants.js          # Referral tiers (5%, 3%, 1%), plan definitions
-│   │   │   └── db.js                 # Resilient Mongoose connection with retry
+│   │   │   ├── constants.js          # Referral tier rates (5%, 3%, 1%) and plan presets
+│   │   │   └── db.js                 # Resilient Mongoose connection with DNS fallback
 │   │   ├── controllers/
-│   │   │   ├── authController.js     # Register, Login, Me, Mock Deposit
-│   │   │   ├── investmentController.js # Create & View Investments
-│   │   │   ├── dashboardController.js  # Aggregated metrics & 7-day chart series
-│   │   │   ├── referralController.js # Direct referrals, nested tree, history
-│   │   │   └── roiController.js      # ROI history & on-demand test trigger
+│   │   │   ├── authController.js     # User registration, login, profile, and test deposits
+│   │   │   ├── investmentController.js # Create and list investment contracts
+│   │   │   ├── dashboardController.js  # Aggregated metrics and 7-day earnings chart data
+│   │   │   ├── referralController.js # Direct referrals, nested hierarchy tree, history
+│   │   │   └── roiController.js      # ROI payout logs and test trigger
 │   │   ├── cron/
-│   │   │   └── roiCron.js            # Node-cron scheduler running daily at 00:00 AM
+│   │   │   └── roiCron.js            # node-cron scheduler running daily at midnight
 │   │   ├── middlewares/
-│   │   │   ├── auth.js               # JWT Bearer token protection & user status check
-│   │   │   └── errorHandler.js       # Centralized error handler (CastError, E11000, Joi)
+│   │   │   ├── auth.js               # JWT bearer token verification
+│   │   │   └── errorHandler.js       # Centralized error handler
 │   │   ├── models/
-│   │   │   ├── User.js               # User schema with encrypted passwords & wallets
-│   │   │   ├── Investment.js         # Investment contracts, maturity dates, status
-│   │   │   ├── ReferralIncome.js     # Audit ledger for multi-tier level earnings
-│   │   │   └── ROIHistory.js         # Idempotent daily ROI payout history
+│   │   │   ├── User.js               # User accounts, referral codes, and wallet balances
+│   │   │   ├── Investment.js         # Contract amounts, durations, rates, and statuses
+│   │   │   ├── ReferralIncome.js     # Multi-level commission audit ledger
+│   │   │   └── ROIHistory.js         # Daily ROI distribution history with unique index
 │   │   ├── routes/
 │   │   │   ├── authRoutes.js
 │   │   │   ├── investmentRoutes.js
 │   │   │   ├── dashboardRoutes.js
 │   │   │   ├── referralRoutes.js
 │   │   │   ├── roiRoutes.js
-│   │   │   └── cronRoutes.js
+│   │   │   ├── cronRoutes.js
+│   │   │   └── docsRoutes.js         # Interactive API docs route (/api/docs)
 │   │   ├── services/
-│   │   │   ├── referralService.js    # Hierarchy traversal & commission distribution
-│   │   │   └── roiService.js         # Idempotent Daily ROI calculation engine
-│   │   ├── seed.js                   # Comprehensive demo network seeder script
-│   │   └── server.js                 # Application bootstrap & lifecycle management
+│   │   │   ├── referralService.js    # 3-tier upline traversal and wallet updates
+│   │   │   └── roiService.js         # Idempotent daily ROI calculation engine
+│   │   ├── seed.js                   # Seed script with 5 demo accounts & hierarchy
+│   │   └── server.js                 # Express server bootstrap
 │   ├── tests/
-│   │   ├── referralMath.test.js      # 3-tier commission math & 4th-level cap tests
-│   │   ├── idempotency.test.js       # Daily ROI double-run duplicate prevention tests
-│   │   └── health.test.js            # System health diagnostics & docs route tests
+│   │   ├── referralMath.test.js      # Unit tests for 5%, 3%, 1% upline distribution
+│   │   ├── idempotency.test.js       # Idempotency double-run prevention tests
+│   │   └── health.test.js            # Health diagnostics & route tests
 │   ├── postman/
-│   │   └── Nexachain_Investment_Platform.postman_collection.json # Ready-to-import API tests
+│   │   └── Nexachain_Investment_Platform.postman_collection.json
 │   ├── .env.example
 │   └── package.json
 ├── frontend/
 │   ├── src/
-│   │   ├── api/
-│   │   │   └── client.js             # Axios client with automatic Bearer interceptor
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx            # Brand header, wallet balance pill, quick actions
-│   │   │   ├── DashboardCards.jsx    # Metric cards (Investments, Daily ROI, Level, Wallet)
-│   │   │   ├── EarningsChart.jsx     # Recharts 7-day ROI vs Level income area chart
-│   │   │   ├── InvestmentTable.jsx   # Portfolio contract ledger with status badges
-│   │   │   ├── RoiTable.jsx          # Daily ROI payout history ledger
-│   │   │   ├── ReferralTable.jsx     # Network referral commission ledger
-│   │   │   ├── ReferralTree.jsx      # Recursive nested tree hierarchy visualization
-│   │   │   ├── InvestmentModal.jsx   # Interactive plan selector & projected ROI calculator
-│   │   │   ├── DepositModal.jsx      # Instant wallet top-up modal for testing
-│   │   │   └── CronSimulator.jsx     # Live Idempotency test trigger console
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx       # Global reactive user authentication state
-│   │   ├── pages/
-│   │   │   ├── LoginPage.jsx         # Login screen with 1-click evaluator demo accounts
-│   │   │   ├── RegisterPage.jsx      # Registration screen with auto-filled referral codes
-│   │   │   └── DashboardPage.jsx     # Primary responsive dashboard orchestrator
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   └── main.jsx
-│   ├── index.html
-│   ├── vite.config.js
-│   ├── tailwind.config.js
+│   │   ├── api/client.js             # Axios instance with auth interceptor
+│   │   ├── components/               # Cards, Recharts analytics, data tables, tree UI
+│   │   ├── context/                  # AuthContext and ThemeContext
+│   │   ├── pages/                    # LoginPage, RegisterPage, DashboardPage
+│   │   └── utils/csvExport.js        # CSV export utility for tables
 │   └── package.json
 └── README.md
 ```
 
 ---
 
-## 🗄️ Task 1: Database Schema Design & Optimization
+## Database Design & Indexing (Task 1)
 
-All schemas are implemented inside `backend/src/models/` with strict Mongoose validation, type definitions, and compound indexing:
+All schemas are defined using Mongoose in `backend/src/models/` with strict type constraints, compound indexing, and validation hooks.
 
-### 1. `User` Model ([`backend/src/models/User.js`](backend/src/models/User.js))
-- **Fields**:
-  - `fullName`: String (Required, trimmed)
-  - `email`: String (Required, Unique, Lowercase, Indexed)
-  - `mobileNumber`: String (Required)
-  - `password`: String (Bcrypt encrypted, hashed via `pre('save')` hook, omitted in queries by default)
-  - `referralCode`: String (Unique, Indexed, Auto-generated 8-char uppercase string)
-  - `referredBy`: ObjectId (ref: `User`, Indexed upline sponsor)
-  - `walletBalance`: Number (Default: 0, non-negative validator)
-  - `totalRoiEarned`: Number (Default: 0, non-negative validator)
-  - `totalLevelIncomeEarned`: Number (Default: 0, non-negative validator)
-  - `accountStatus`: Enum `['Active', 'Suspended', 'Inactive']` (Default: `Active`, Indexed)
-  - `timestamps`: `createdAt`, `updatedAt`
+### 1. User (`backend/src/models/User.js`)
+- `fullName`: String (Required, trimmed)
+- `email`: String (Required, Unique, Lowercase, Indexed)
+- `mobileNumber`: String (Required)
+- `password`: String (Bcrypt salted, hashed via async pre-save hook)
+- `referralCode`: String (Unique, Indexed, Auto-generated 8-character string)
+- `referredBy`: ObjectId (ref: User, Indexed)
+- `walletBalance`: Number (Default: 0)
+- `totalRoiEarned`: Number (Default: 0)
+- `totalLevelIncomeEarned`: Number (Default: 0)
+- `accountStatus`: Enum `['Active', 'Suspended', 'Inactive']` (Default: `Active`, Indexed)
 
-### 2. `Investment` Model ([`backend/src/models/Investment.js`](backend/src/models/Investment.js))
-- **Fields**:
-  - `user`: ObjectId (ref: `User`, Required, Indexed)
-  - `investmentAmount`: Number (Required, Min: 1)
-  - `planDetails`: Object (`planName`, `durationDays`, `dailyRoiPercentage`, `description`)
-  - `startDate`: Date (Default: `Date.now`)
-  - `endDate`: Date (Required, calculated: `startDate + durationDays`)
-  - `dailyRoiPercentage`: Number (Required)
-  - `investmentStatus`: Enum `['Active', 'Completed', 'Cancelled']` (Default: `Active`, Indexed)
-  - `totalRoiPaid`: Number (Default: 0)
-  - `lastRoiDate`: Date
-- **Compound Indexes**:
-  - `{ investmentStatus: 1, startDate: 1, endDate: 1 }` — High-speed cron queries.
-  - `{ user: 1, investmentStatus: 1, createdAt: -1 }` — Fast dashboard filtering.
+### 2. Investment (`backend/src/models/Investment.js`)
+- `user`: ObjectId (ref: User, Indexed)
+- `investmentAmount`: Number (Required, Min: 1)
+- `planDetails`: Object (`planName`, `durationDays`, `dailyRoiPercentage`, `description`)
+- `startDate`: Date (Default: `Date.now`)
+- `endDate`: Date (Required, calculated: `startDate + durationDays`)
+- `dailyRoiPercentage`: Number (Required)
+- `investmentStatus`: Enum `['Active', 'Completed', 'Cancelled']` (Default: `Active`, Indexed)
+- `totalRoiPaid`: Number (Default: 0)
+- `lastRoiDate`: Date
+- **Compound Indexes:**
+  - `{ investmentStatus: 1, startDate: 1, endDate: 1 }` — Optimizes midnight cron queries
+  - `{ user: 1, investmentStatus: 1, createdAt: -1 }` — Speeds up dashboard portfolio queries
 
-### 3. `ReferralIncome` Model ([`backend/src/models/ReferralIncome.js`](backend/src/models/ReferralIncome.js))
-- **Fields**:
-  - `recipientUser`: ObjectId (ref: `User`, Beneficiary of the commission, Indexed)
-  - `sourceUser`: ObjectId (ref: `User`, Downline user who made the investment, Indexed)
-  - `investment`: ObjectId (ref: `Investment`, Contract triggering the commission)
-  - `referralLevel`: Number (Level 1, Level 2, Level 3)
-  - `commissionPercentage`: Number (e.g. 5%, 3%, 1%)
-  - `incomeAmount`: Number (Calculated commission in $)
-  - `date`: Date (Default: `Date.now`)
-- **Compound Indexes**:
-  - `{ recipientUser: 1, date: -1 }` — Fast user ledger lookups.
-  - `{ investment: 1, referralLevel: 1 }` (Unique) — Guaranteed duplicate commission prevention.
+### 3. ReferralIncome (`backend/src/models/ReferralIncome.js`)
+- `recipientUser`: ObjectId (ref: User, Beneficiary of commission, Indexed)
+- `sourceUser`: ObjectId (ref: User, Downline user activating the contract, Indexed)
+- `investment`: ObjectId (ref: Investment, Contract ID)
+- `referralLevel`: Number (1, 2, or 3)
+- `commissionPercentage`: Number (5%, 3%, 1%)
+- `incomeAmount`: Number (Commission amount credited)
+- `date`: Date (Default: `Date.now`)
+- **Compound Indexes:**
+  - `{ recipientUser: 1, date: -1 }` — Fast ledger history retrieval
+  - `{ investment: 1, referralLevel: 1 }` (Unique) — Guarantees no upline receives duplicate commission for the same contract
 
-### 4. `ROIHistory` Model ([`backend/src/models/ROIHistory.js`](backend/src/models/ROIHistory.js))
-- **Fields**:
-  - `user`: ObjectId (ref: `User`, Indexed)
-  - `investment`: ObjectId (ref: `Investment`, Indexed)
-  - `roiAmount`: Number
-  - `roiPercentage`: Number
-  - `date`: Date
-  - `dateString`: String (Standardized `YYYY-MM-DD` calendar identifier, Indexed)
-  - `status`: Enum `['Credited', 'Failed', 'Pending']`
-- **Critical Idempotent Index**:
-  - `{ investment: 1, dateString: 1 }` (Unique constraint) — Absolute database-level guarantee that an investment can **never** receive double daily ROI for the same date.
+### 4. ROIHistory (`backend/src/models/ROIHistory.js`)
+- `user`: ObjectId (ref: User, Indexed)
+- `investment`: ObjectId (ref: Investment, Indexed)
+- `roiAmount`: Number
+- `roiPercentage`: Number
+- `date`: Date
+- `dateString`: String (Standardized `YYYY-MM-DD` calendar identifier, Indexed)
+- `status`: Enum `['Credited', 'Failed', 'Pending']`
+- **Unique Idempotent Index:**
+  - `{ investment: 1, dateString: 1 }` (Unique) — Enforces database-level duplicate prevention for the same calendar date
 
 ---
 
-## ⚡ Task 2: RESTful API Specifications
+## API Reference (Task 2)
 
-All private endpoints require the HTTP header:  
-`Authorization: Bearer <JWT_TOKEN>`
+Private routes require the header: `Authorization: Bearer <JWT_TOKEN>`.
 
-### 1. Authentication Endpoints
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/v1/auth/register` | Public | Register user, validate optional sponsor code, issue JWT |
-| `POST` | `/api/v1/auth/login` | Public | Authenticate user credentials, issue JWT |
-| `GET` | `/api/v1/auth/me` | Private | Retrieve authenticated user profile & sponsor details |
-| `POST` | `/api/v1/auth/deposit` | Private | Top-up mock wallet funds for sandbox testing |
+### Authentication
+- `POST /api/v1/auth/register` — Create user account with optional referral code
+- `POST /api/v1/auth/login` — Authenticate and receive JWT token
+- `GET /api/v1/auth/me` — Get current authenticated user profile
+- `POST /api/v1/auth/deposit` — Add funds to wallet (for sandbox testing)
 
-### 2. Investment Endpoints
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/investments/plans` | Public | Fetch configured investment plans |
-| `POST` | `/api/v1/investments` | Private | Create investment, deduct wallet, trigger multi-tier referral distribution |
-| `GET` | `/api/v1/investments` | Private | View user's investments with status filters and totals |
+### Investments
+- `GET /api/v1/investments/plans` — List preset investment plans
+- `POST /api/v1/investments` — Activate investment plan, deduct wallet, trigger referral payout
+- `GET /api/v1/investments` — List user's active and completed investment contracts
 
-### 3. Dashboard Endpoints
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/dashboard` | Private | Returns cards metrics, active contracts, wallet balance, and 7-day earnings chart series |
+### Dashboard Metrics
+- `GET /api/v1/dashboard` — Returns verbatim metrics (`totalInvestments`, `totalRoiEarned`, `totalLevelIncomeEarned`, `walletBalance`, `dailyRoi`, and 7-day earnings chart series)
 
-### 4. Referral Endpoints
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/referrals/direct` | Private | Fetch direct referrals (Level 1) with active investment statistics |
-| `GET` | `/api/v1/referrals/tree` | Private | Fetch nested referral hierarchy tree up to N levels |
-| `GET` | `/api/v1/referrals/history`| Private | Paginated ledger of referral commission transactions |
+### Referrals
+- `GET /api/v1/referrals/direct` — List direct (Level 1) referrals with investment statistics
+- `GET /api/v1/referrals/tree` — Return multi-level nested referral tree
+- `GET /api/v1/referrals/history` — Audit ledger of referral commissions received
 
-### 5. ROI & Scheduler Endpoints
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/roi/history` | Private | Paginated ledger of daily ROI payouts |
-| `POST` | `/api/v1/cron/trigger-daily-roi` | Private | Manual trigger endpoint for testing cron & idempotency safeguards |
+### ROI & Cron
+- `GET /api/v1/roi/history` — Daily ROI payout ledger
+- `POST /api/v1/cron/trigger-daily-roi` — Trigger daily ROI run on demand (useful for evaluator idempotency testing)
+- `GET /api/health` — System diagnostics, uptime, and database connection state
+- `GET /api/docs` — Interactive HTML documentation of all REST endpoints
 
 ---
 
-## 🧠 Task 3: Business Logic & Mathematical Formulas
+## Business Logic & Calculations (Task 3)
 
-### 1. Daily ROI Calculation Engine
-- **Formula**:
-  $$\text{Daily ROI Amount} = \frac{\text{Investment Amount} \times \text{Daily ROI Percentage}}{100}$$
-- **Lifecycle & Execution Flow**:
-  1. Scheduler queries all contracts with `investmentStatus === 'Active'` where `startDate <= today`.
-  2. Evaluates idempotency: checks if an `ROIHistory` record already exists for `(investmentId, dateString)`.
-  3. Uses atomic document operators (`$inc: { walletBalance: roi, totalRoiEarned: roi }`) within MongoDB transactional sessions.
-  4. Increments contract's `totalRoiPaid` and sets `lastRoiDate = today`.
-  5. If `today >= contract.endDate`, the contract is automatically transitioned to `investmentStatus = 'Completed'`.
+### 1. Daily ROI Distribution
+- **Formula:**
+  $$\text{Daily ROI} = \frac{\text{Investment Amount} \times \text{Daily ROI Percentage}}{100}$$
+- **Execution:**
+  1. Finds all active contracts where `startDate <= today` and `investmentStatus === 'Active'`.
+  2. Generates date string `YYYY-MM-DD` (UTC).
+  3. Checks if `ROIHistory` already exists for `(investment, dateString)`. If found, skips.
+  4. Atomically increments user's `walletBalance` and `totalRoiEarned`.
+  5. Inserts an `ROIHistory` record.
+  6. If contract maturity date is reached (`today >= endDate`), updates status to `Completed`.
 
-### 2. Multi-Tier Referral Traversal Engine
-- **Tier Commission Matrix**:
-  - **Level 1 (Direct Sponsor)**: 5.0%
-  - **Level 2 (Sponsor's Sponsor)**: 3.0%
-  - **Level 3 (Grand-sponsor)**: 1.0%
-- **Algorithm**:
-  $$\text{Level Income} = \frac{\text{Investment Amount} \times \text{Tier Percentage}}{100}$$
-  When an investor activates a new contract:
-  1. The engine checks if the investor was sponsored (`investor.referredBy`).
-  2. Traverses upward through the parent graph for each tier.
-  3. Verifies that the recipient account status is `Active`.
-  4. Atomically credits the sponsor's `walletBalance` and `totalLevelIncomeEarned`.
-  5. Creates an audit record in `ReferralIncome` with `{ investment, referralLevel }` unique index.
-
----
-
-## ⏰ Task 5: Cron Job Scheduler & Idempotency Safeguards
-
-The automated scheduler is implemented with `node-cron` inside [`backend/src/cron/roiCron.js`](backend/src/cron/roiCron.js):
-
-- **Cron Expression**: `0 0 * * *` (Executes every midnight at 12:00 AM).
-- **Two-Tier Idempotency Architecture**:
-  1. **Application-Level Check**: Before attempting database updates, `roiService` queries `ROIHistory.exists({ investment: id, dateString: 'YYYY-MM-DD' })`. If existing, it skips processing.
-  2. **Database-Level Constraint**: `ROIHistorySchema.index({ investment: 1, dateString: 1 }, { unique: true })`. Even under concurrent server worker clusters, any race condition is caught by MongoDB's unique index constraint (`code 11000`), preventing double payouts.
-- **On-Demand Simulator Console**:
-  In the React frontend, an interactive **Automated Scheduler Console** allows evaluators to click **"Run Scheduled ROI Job Now"**.
-  - **First Run**: Distributes daily payouts and updates balances.
-  - **Second Run Immediately After**: Returns `0 processed, X skipped (Already credited today)`. This visually proves the idempotency safeguard!
+### 2. 3-Tier Referral Commission Traversal
+- **Rates:**
+  - **Level 1 (Direct Sponsor):** 5.0%
+  - **Level 2 (Upline Level 2):** 3.0%
+  - **Level 3 (Upline Level 3):** 1.0%
+  - **Level 4 and beyond:** 0% (Strictly capped at 3 tiers)
+- **Execution:**
+  1. Triggered immediately upon new investment creation.
+  2. Traverses upward through the sponsor chain up to 3 tiers.
+  3. Validates recipient account status (`Active`).
+  4. Atomically credits the upline's `walletBalance` and `totalLevelIncomeEarned`.
+  5. Logs each transaction to `ReferralIncome` with `{ investment, referralLevel }` unique index.
 
 ---
 
-## 💻 Task 4: React Dashboard Architecture
+## Cron Scheduler & Idempotency (Task 5)
 
-Built with modern **Vite + React 18 + Tailwind CSS + Lucide Icons + Recharts**:
-
-1. **Dashboard Metric Cards**:
-   - Total Investments (with active vs total plans)
-   - Daily ROI (with estimated daily yield)
-   - Total Level Income (with direct downlines count)
-   - Wallet Balance (with instant top-up action)
-2. **Interactive Earnings Chart**:
-   - Visual 7-day stacked gradient area chart comparing Daily ROI versus Level Referral Income.
-3. **Interactive Referral Tree**:
-   - Visual nested tree representation of multi-level downlines.
-   - Shows Level Badges (Root, Level 1, Level 2, Level 3), user details, referral codes, joined dates, and total investment volume.
-   - Expandable / collapsible nodes.
-4. **Contract & Financial Ledgers**:
-   - Investment Portfolio Table (with status badges: Active, Completed, Cancelled).
-   - Daily ROI History Table.
-   - Referral Income Ledger.
-5. **Interactive Modals**:
-   - New Investment Modal with dynamic plan picker and real-time ROI calculator.
-   - Mock Wallet Deposit Modal.
-6. **1-Click Evaluator Logins**:
-   - On the login screen, single-click buttons instantly populate demo credentials for **Alice (Root Sponsor)** or **Bob (Level 1)**.
+Implemented with `node-cron` in `backend/src/cron/roiCron.js`:
+- Scheduled to run at midnight: `0 0 * * *`.
+- **Two-tier idempotency defense:**
+  - Application check: Checks if `dateString === YYYY-MM-DD` already exists before processing.
+  - Database constraint: MongoDB unique compound index `{ investment: 1, dateString: 1 }` rejects duplicate writes even if two workers run at the same millisecond.
+- Evaluators can test this via the frontend dashboard or by calling:
+  ```bash
+  curl -X POST http://localhost:5000/api/v1/cron/trigger-daily-roi \
+    -H "Authorization: Bearer <TOKEN>"
+  ```
+  Running it twice for the same day returns `skippedCount` for contracts already credited and prevents duplicate payouts.
 
 ---
 
-## 🚀 Quick Setup & Installation Guide
+## Frontend Dashboard (Task 4)
+
+Built with React 18, Vite, and Tailwind CSS in `frontend/`:
+- **Theme System:** Defaults to a clean Corporate White palette, with 4 additional themes (Olive Green & Cream, Sunset Orange & Cream, Dark Mode, Emerald Onyx). Accessible via the palette icon in the header and login screen.
+- **Metric Cards:** Real-time display of Total Investments, Daily ROI, Level Income, and Wallet Balance.
+- **Recharts Analytics:** Visual area chart comparing 7-day Daily ROI earnings vs Referral commissions.
+- **3 Ledger Tables with 1-Click CSV Export:**
+  - Investment Portfolio (with status filter tabs and search)
+  - Daily ROI Payout History
+  - Referral Income History
+- **Expandable Referral Tree:** Visual tree component rendering nested downlines with active investment volume.
+- **Scheduler Testing Console:** Trigger the midnight cron job on demand and verify idempotency live in the browser.
+
+---
+
+## Setup & Local Reproduction
 
 ### Prerequisites
-- Node.js `v18+` or `v20+` (tested on Node `v24.x`)
-- MongoDB (Local instance at `mongodb://127.0.0.1:27017` or a MongoDB Atlas URI)
+- Node.js (v18 or v20)
+- npm (v9+)
+- MongoDB Atlas or local MongoDB instance (MongoDB Atlas connection string is pre-configured in `.env`)
 
 ### Step 1: Start Backend
 ```bash
-# Navigate to backend directory
 cd backend
-
-# Install dependencies (already pre-installed)
 npm install
 
-# (Optional) Seed realistic demo users, investments, and referral hierarchy
+# (Optional) Seed 5 demo accounts with pre-existing investments and hierarchy
 npm run seed
 
-# Start backend server
+# Run automated tests (14/14 tests)
+npm test
+
+# Start API server
 npm run dev
-# Server will run on: http://localhost:5000
+# Server runs on: http://localhost:5000
+# API docs available at: http://localhost:5000/api/docs
 ```
 
 ### Step 2: Start Frontend
 ```bash
-# In a new terminal, navigate to frontend directory
-cd frontend
-
-# Install dependencies (already pre-installed)
+cd ../frontend
 npm install
 
-# Start Vite development server
 npm run dev
-# Frontend dashboard will be live at: http://localhost:3000
+# Dashboard runs on: http://localhost:3000
 ```
 
-### Step 3: Log In with Pre-Seeded Demo Accounts
-- **Root Sponsor (Alice)**:
+### Demo Accounts for Testing
+- **Root Sponsor (Alice):**
   - Email: `alice@nexachain.ai`
   - Password: `password123`
-  - Referral Code: `NXALICE1`
-  - *(Has multiple tiers of downlines and active contracts)*
-- **Downline Member (Bob)**:
+  - *(Has active contracts, 3 tiers of referrals, and past payout logs)*
+- **Downline Member (Bob):**
   - Email: `bob@nexachain.ai`
   - Password: `password123`
-  - Referred by: Alice
+  - *(Referred directly by Alice)*
 
 ---
 
-## 🧪 Automated Unit & Integration Testing (Jest)
+## Automated Test Suite
 
-A rigorous test suite is configured to verify core mathematical algorithms, calendar-day idempotency, and system health.
+A test suite with 14 unit and integration tests is located in `backend/tests/`:
 
 ```bash
-# Run automated test suite
 cd backend
 npm test
 ```
 
-### Test Suite Coverage:
-1. **`tests/referralMath.test.js`**:
-   - Level 1 direct sponsor exact 5% commission calculation.
-   - Level 2 upline exact 3% commission calculation.
-   - Level 3 upline exact 1% commission calculation.
-   - Strict 3-tier boundary validation (Level 4+ uplines receive 0%).
-   - Platform payout budget verification (total platform commission exactly 9%).
-2. **`tests/idempotency.test.js`**:
-   - First calendar-day execution verification.
-   - Multi-trigger duplicate prevention (running 2x or 10x does not duplicate payout).
-   - Calendar date progression verification (`YYYY-MM-DD`).
-3. **`tests/health.test.js`**:
-   - `/health` and `/api/health` diagnostics and uptime metrics.
-   - Interactive Swagger docs rendering at `/api/docs`.
-   - 404 structured JSON error handling.
+### Test Coverage:
+- `tests/referralMath.test.js`: Verifies exact 5%, 3%, 1% math, floating-point precision, and strict Level 4+ cap (0%).
+- `tests/idempotency.test.js`: Verifies calendar-day duplicate prevention (running 2x or 10x does not duplicate payout).
+- `tests/health.test.js`: Tests `/health`, `/api/health`, `/api/docs`, and 404 error responses.
 
 ---
 
-## 📊 Enterprise Features: CSV Export & Health Check
+## Postman Collection
 
-1. **1-Click CSV Export**:
-   - All three core ledgers (**Investment Portfolio**, **Daily ROI Payouts**, and **Referral History**) include an instant `Export CSV` button formatted cleanly for Microsoft Excel and Google Sheets.
-2. **System Health & Diagnostic API (`GET /api/health`)**:
-   - Real-time server diagnostics returning MongoDB connection status, system uptime in seconds, heap memory consumption, and API version.
+A Postman collection is included in the repository at:  
+`backend/postman/Nexachain_Investment_Platform.postman_collection.json`
 
----
-
-## 📮 Postman Collection
-
-A complete Postman Collection is provided inside:  
-[`backend/postman/Nexachain_Investment_Platform.postman_collection.json`](backend/postman/Nexachain_Investment_Platform.postman_collection.json)
-
-### How to use:
-1. Open Postman -> Click **Import** -> Select `Nexachain_Investment_Platform.postman_collection.json`.
-2. Run the request **"1. Authentication -> Login User"**.
-3. A test script automatically captures the returned JWT token and sets `{{token}}` in your collection variables.
-4. All subsequent authenticated requests (Investments, Dashboard, Referrals, ROI, Cron Trigger) will use the token automatically.
+### Usage:
+1. Import the JSON file into Postman.
+2. Run the request **1. Authentication -> Login User**.
+3. A test script automatically extracts the JWT token and assigns it to `{{token}}`.
+4. Subsequent requests use the bearer token automatically.
 
 ---
 
-## 💡 Assumptions Made During Development
+## Assumptions & Design Choices
 
-1. **Referral Tier Distribution**: A standard 3-tier commission model was adopted (Level 1: 5%, Level 2: 3%, Level 3: 1%).
-2. **Wallet-Funded Contracts**: Investments are activated by deducting from the user's liquid `walletBalance`. A mock sandbox deposit feature is provided so evaluators can top-up balances freely.
-3. **Calendar-Day Idempotency**: Daily ROI is bounded to a unique calendar date (`YYYY-MM-DD`). A contract can receive at most one payout per calendar day.
-4. **Graceful Transaction Support**: The services use MongoDB sessions (`ClientSession`) for ACID transactions when connected to a replica set/Atlas, with automatic atomic fallbacks for standalone local instances.
+1. **Referral Commission Rates:** Standard 3-tier structure (Level 1: 5%, Level 2: 3%, Level 3: 1%).
+2. **Investment Activation:** Investments deduct directly from the user's liquid `walletBalance`. A test deposit feature (`POST /api/v1/auth/deposit`) is available so evaluators can top up balances without external payment gateways.
+3. **Calendar-Day Idempotency:** Daily ROI is bound to a `YYYY-MM-DD` date string. A contract can receive at most one credit per calendar day.
+4. **Transaction Support:** Uses MongoDB `ClientSession` transactions when running on replica sets (like MongoDB Atlas), with atomic fallbacks for standalone local instances.
 
 ---
 
-## 🏆 Evaluation Criteria Checklist
+## Assessment Verification Checklist
 
-- [x] **Database Design**: Proper schema relationships, strict types, compound indexing, unique constraints.
-- [x] **API Architecture**: Clean layered separation of concerns (Routes -> Middlewares -> Controllers -> Services -> Models).
-- [x] **Code Quality**: Clean, modular, thoroughly commented, standard JSON error handling.
-- [x] **Security Practices**: Bcrypt password salting, JWT token authentication, route protection, Helmet headers, CORS, rate limiting.
-- [x] **Business Logic Accuracy**: Precision calculations for daily ROI and multi-level upline traversal.
-- [x] **Frontend UI/UX**: Responsive React dashboard with dark/fintech aesthetics, Recharts charts, and nested referral tree.
-- [x] **Cron Job & Idempotency**: Node-cron running at 12:00 AM with bulletproof multi-layer duplicate prevention.
-- [x] **Documentation & Postman**: Full Postman v2.1 collection and comprehensive README.
+- [x] Task 1: Database schemas with strict typing and compound indexes.
+- [x] Task 2: RESTful APIs for Auth, Investments, Dashboard, and Referrals.
+- [x] Task 3: Daily ROI calculation and 3-tier upline referral distribution.
+- [x] Task 4: Responsive React dashboard with Recharts, 3 tables with CSV export, and referral tree.
+- [x] Task 5: node-cron scheduler at `0 0 * * *` with 2-tier idempotency duplicate prevention.
+- [x] Deliverables: GitHub repository, Postman collection, API docs, seed script, unit tests, and README.
