@@ -76,6 +76,10 @@ nexachain-investment-platform/
 │   │   │   └── roiService.js         # Idempotent Daily ROI calculation engine
 │   │   ├── seed.js                   # Comprehensive demo network seeder script
 │   │   └── server.js                 # Application bootstrap & lifecycle management
+│   ├── tests/
+│   │   ├── referralMath.test.js      # 3-tier commission math & 4th-level cap tests
+│   │   ├── idempotency.test.js       # Daily ROI double-run duplicate prevention tests
+│   │   └── health.test.js            # System health diagnostics & docs route tests
 │   ├── postman/
 │   │   └── Nexachain_Investment_Platform.postman_collection.json # Ready-to-import API tests
 │   ├── .env.example
@@ -328,6 +332,43 @@ npm run dev
   - Email: `bob@nexachain.ai`
   - Password: `password123`
   - Referred by: Alice
+
+---
+
+## 🧪 Automated Unit & Integration Testing (Jest)
+
+A rigorous test suite is configured to verify core mathematical algorithms, calendar-day idempotency, and system health.
+
+```bash
+# Run automated test suite
+cd backend
+npm test
+```
+
+### Test Suite Coverage:
+1. **`tests/referralMath.test.js`**:
+   - Level 1 direct sponsor exact 5% commission calculation.
+   - Level 2 upline exact 3% commission calculation.
+   - Level 3 upline exact 1% commission calculation.
+   - Strict 3-tier boundary validation (Level 4+ uplines receive 0%).
+   - Platform payout budget verification (total platform commission exactly 9%).
+2. **`tests/idempotency.test.js`**:
+   - First calendar-day execution verification.
+   - Multi-trigger duplicate prevention (running 2x or 10x does not duplicate payout).
+   - Calendar date progression verification (`YYYY-MM-DD`).
+3. **`tests/health.test.js`**:
+   - `/health` and `/api/health` diagnostics and uptime metrics.
+   - Interactive Swagger docs rendering at `/api/docs`.
+   - 404 structured JSON error handling.
+
+---
+
+## 📊 Enterprise Features: CSV Export & Health Check
+
+1. **1-Click CSV Export**:
+   - All three core ledgers (**Investment Portfolio**, **Daily ROI Payouts**, and **Referral History**) include an instant `Export CSV` button formatted cleanly for Microsoft Excel and Google Sheets.
+2. **System Health & Diagnostic API (`GET /api/health`)**:
+   - Real-time server diagnostics returning MongoDB connection status, system uptime in seconds, heap memory consumption, and API version.
 
 ---
 

@@ -1,9 +1,47 @@
-import React from 'react';
-import { Landmark, CheckCircle, Clock, XCircle, ArrowUpRight } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Landmark, CheckCircle, Clock, XCircle, ArrowUpRight, Download, Search, Filter } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { exportToCSV } from '../utils/csvExport';
 
 export const InvestmentTable = ({ investments = [], loading = false, onInvestClick }) => {
   const { currentTheme } = useTheme();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+
+  const filteredInvestments = useMemo(() => {
+    return investments.filter(inv => {
+      const matchesSearch = (inv.planDetails?.planName || 'Standard Plan')
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'ALL' || inv.investmentStatus?.toUpperCase() === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [investments, searchTerm, statusFilter]);
+
+  const handleExportCSV = () => {
+    const rows = filteredInvestments.map(inv => ({
+      id: inv._id,
+      planName: inv.planDetails?.planName || 'Standard Plan',
+      amount: `$${inv.investmentAmount}`,
+      dailyRoiPercentage: `${inv.dailyRoiPercentage}%`,
+      totalRoiPaid: `$${Number(inv.totalRoiPaid || 0).toFixed(2)}`,
+      startDate: new Date(inv.startDate).toLocaleDateString(),
+      endDate: new Date(inv.endDate).toLocaleDateString(),
+      status: inv.investmentStatus
+    }));
+
+    exportToCSV('Nexachain_Investment_Portfolio', rows, {
+      id: 'Contract ID',
+      planName: 'Plan Name',
+      amount: 'Capital Invested',
+      dailyRoiPercentage: 'Daily ROI %',
+      totalRoiPaid: 'Total ROI Paid',
+      startDate: 'Start Date',
+      endDate: 'Maturity Date',
+      status: 'Status'
+    });
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Active':
@@ -39,7 +77,7 @@ export const InvestmentTable = ({ investments = [], loading = false, onInvestCli
     >
       <div
         style={{ borderColor: currentTheme.border }}
-        className="p-5 border-b flex items-center justify-between"
+        className="p-5 border-b flex flex-wrap gap-4 items-center justify-between"
       >
         <div className="flex items-center space-x-2.5">
           <div
@@ -53,21 +91,76 @@ export const InvestmentTable = ({ investments = [], loading = false, onInvestCli
               Investment Portfolio
             </h3>
             <p className="text-xs" style={{ color: currentTheme.textSecondary }}>
-              All active and historical investment contracts
+              All active and historical investment contracts ({filteredInvestments.length} shown)
             </p>
           </div>
         </div>
 
-        {onInvestClick && (
-          <button
-            onClick={onInvestClick}
-            style={{ backgroundColor: currentTheme.accent }}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-white text-xs font-bold transition hover:opacity-90"
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5" style={{ color: currentTheme.textSecondary }} />
+            <input
+              type="text"
+              placeholder="Search plan..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+                color: currentTheme.textPrimary
+              }}
+              className="pl-8 pr-3 py-1.5 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-emerald-500 transition"
+            />
+          </div>
+
+          {/* Filter Tabs */}
+          <div
+            style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.border }}
+            className="flex items-center p-1 border rounded-xl text-xs font-semibold"
           >
-            <span>New Plan</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            {['ALL', 'ACTIVE', 'COMPLETED'].map((st) => (
+              <button
+                key={st}
+                onClick={() => setStatusFilter(st)}
+                style={{
+                  backgroundColor: statusFilter === st ? currentTheme.card : 'transparent',
+                  color: statusFilter === st ? currentTheme.textPrimary : currentTheme.textSecondary,
+                  boxShadow: statusFilter === st ? '0 1px 2px rgba(0,0,0,0.06)' : 'none'
+                }}
+                className="px-2.5 py-1 rounded-lg transition capitalize text-[11px]"
+              >
+                {st.toLowerCase()}
+              </button>
+            ))}
+          </div>
+
+          {/* Export CSV Button */}
+          <button
+            onClick={handleExportCSV}
+            style={{
+              backgroundColor: currentTheme.bg,
+              borderColor: currentTheme.border,
+              color: currentTheme.textPrimary
+            }}
+            className="flex items-center space-x-1.5 px-3 py-1.5 border rounded-xl text-xs font-bold hover:opacity-85 transition"
+            title="Download CSV Spreadsheet"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export CSV</span>
           </button>
-        )}
+
+          {onInvestClick && (
+            <button
+              onClick={onInvestClick}
+              style={{ backgroundColor: currentTheme.accent }}
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-white text-xs font-bold transition hover:opacity-90 shadow-sm"
+            >
+              <span>New Plan</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -100,15 +193,15 @@ export const InvestmentTable = ({ investments = [], loading = false, onInvestCli
                   Loading investments...
                 </td>
               </tr>
-            ) : investments.length === 0 ? (
+            ) : filteredInvestments.length === 0 ? (
               <tr>
                 <td colSpan="7" className="text-center py-12" style={{ color: currentTheme.textSecondary }}>
-                  <p className="text-sm font-semibold">No investment contracts found.</p>
-                  <p className="text-xs mt-1">Activate an investment plan to start receiving daily ROI.</p>
+                  <p className="text-sm font-semibold">No matching investment contracts.</p>
+                  <p className="text-xs mt-1">Try clearing filters or activate a new investment plan.</p>
                 </td>
               </tr>
             ) : (
-              investments.map((inv) => (
+              filteredInvestments.map((inv) => (
                 <tr key={inv._id} className="hover:opacity-85 transition">
                   <td className="px-5 py-4 font-bold" style={{ color: currentTheme.textPrimary }}>
                     {inv.planDetails?.planName || 'Standard Plan'}

@@ -1,9 +1,32 @@
 import React from 'react';
-import { Users, CheckCircle } from 'lucide-react';
+import { Users, CheckCircle, Download } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { exportToCSV } from '../utils/csvExport';
 
 export const ReferralTable = ({ referralHistory = [], loading = false }) => {
   const { currentTheme } = useTheme();
+
+  const handleExportCSV = () => {
+    const rows = referralHistory.map(item => ({
+      date: new Date(item.date).toLocaleDateString(),
+      downlineMember: item.sourceUser?.fullName || 'Downline Member',
+      downlineEmail: item.sourceUser?.email || '',
+      level: `Level ${item.referralLevel}`,
+      contractSize: `$${Number(item.investment?.investmentAmount || 0).toLocaleString()}`,
+      commissionRate: `${item.commissionPercentage}%`,
+      earnedAmount: `$${Number(item.incomeAmount).toFixed(2)}`
+    }));
+
+    exportToCSV('Nexachain_Referral_Commission_Ledger', rows, {
+      date: 'Credit Date',
+      downlineMember: 'Downline Member',
+      downlineEmail: 'Downline Email',
+      level: 'Referral Tier',
+      contractSize: 'Contract Size',
+      commissionRate: 'Commission Rate',
+      earnedAmount: 'Commission Earned'
+    });
+  };
 
   return (
     <div
@@ -29,10 +52,24 @@ export const ReferralTable = ({ referralHistory = [], loading = false }) => {
               Referral & Level Income History
             </h3>
             <p className="text-xs" style={{ color: currentTheme.textSecondary }}>
-              Multi-level network commissions credited into your wallet
+              Multi-level network commissions credited into your wallet ({referralHistory.length} records)
             </p>
           </div>
         </div>
+
+        <button
+          onClick={handleExportCSV}
+          style={{
+            backgroundColor: currentTheme.bg,
+            borderColor: currentTheme.border,
+            color: currentTheme.textPrimary
+          }}
+          className="flex items-center space-x-1.5 px-3 py-1.5 border rounded-xl text-xs font-bold hover:opacity-85 transition"
+          title="Download CSV Spreadsheet"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Export CSV</span>
+        </button>
       </div>
 
       <div className="overflow-x-auto">

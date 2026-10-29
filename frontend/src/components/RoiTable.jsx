@@ -1,9 +1,30 @@
 import React from 'react';
-import { TrendingUp, CheckCircle } from 'lucide-react';
+import { TrendingUp, CheckCircle, Download } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { exportToCSV } from '../utils/csvExport';
 
 export const RoiTable = ({ roiHistory = [], loading = false }) => {
   const { currentTheme } = useTheme();
+
+  const handleExportCSV = () => {
+    const rows = roiHistory.map(item => ({
+      date: item.dateString || new Date(item.date).toLocaleDateString(),
+      plan: item.investment?.planDetails?.planName || 'Active Investment',
+      investedAmount: `$${Number(item.investment?.investmentAmount || 0).toLocaleString()}`,
+      rate: `${item.roiPercentage}%`,
+      creditedAmount: `$${Number(item.roiAmount).toFixed(2)}`,
+      status: item.status || 'Credited'
+    }));
+
+    exportToCSV('Nexachain_Daily_ROI_Ledger', rows, {
+      date: 'Execution Date',
+      plan: 'Plan Name',
+      investedAmount: 'Capital Invested',
+      rate: 'ROI Rate',
+      creditedAmount: 'Credited Amount',
+      status: 'Status'
+    });
+  };
 
   return (
     <div
@@ -29,10 +50,24 @@ export const RoiTable = ({ roiHistory = [], loading = false }) => {
               Daily ROI Payout Ledger
             </h3>
             <p className="text-xs" style={{ color: currentTheme.textSecondary }}>
-              Automated daily returns credited from active investments
+              Automated daily returns credited from active investments ({roiHistory.length} records)
             </p>
           </div>
         </div>
+
+        <button
+          onClick={handleExportCSV}
+          style={{
+            backgroundColor: currentTheme.bg,
+            borderColor: currentTheme.border,
+            color: currentTheme.textPrimary
+          }}
+          className="flex items-center space-x-1.5 px-3 py-1.5 border rounded-xl text-xs font-bold hover:opacity-85 transition"
+          title="Download CSV Spreadsheet"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Export CSV</span>
+        </button>
       </div>
 
       <div className="overflow-x-auto">

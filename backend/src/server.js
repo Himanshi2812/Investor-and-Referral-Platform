@@ -23,9 +23,6 @@ const docsRoutes = require('./routes/docsRoutes');
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
-
 // Security Middlewares
 app.use(helmet());
 app.use(
@@ -58,14 +55,21 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health Check API
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'UP',
-    timestamp: new Date().toISOString(),
-    service: 'Nexachain AI Investment & Referral Backend'
-  });
+// Health & Architecture Status Check API
+const mongoose = require('mongoose');
+const getHealthStatus = () => ({
+  status: 'UP',
+  database: mongoose.connection.readyState === 1 ? 'Connected (MongoDB Atlas)' : 'Connecting/Disconnected',
+  uptimeSeconds: Math.floor(process.uptime()),
+  memoryUsageMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+  environment: process.env.NODE_ENV || 'production',
+  timestamp: new Date().toISOString(),
+  service: 'Nexachain AI Investment & Referral Backend',
+  version: '1.0.0'
 });
+
+app.get('/health', (req, res) => res.status(200).json(getHealthStatus()));
+app.get('/api/health', (req, res) => res.status(200).json(getHealthStatus()));
 
 // Root welcome & API redirect
 app.get('/', (req, res) => {
@@ -92,14 +96,18 @@ app.use((req, res) => {
 // Central Error Handler Middleware
 app.use(errorHandler);
 
-// Initialize Background Automated Schedulers
-initRoiCron();
+let server;
 
-const PORT = process.env.PORT || 5000;
+// Connect to Database and start server only outside automated test runner
+if (process.env.NODE_ENV !== 'test') {
+  connectDB();
+  initRoiCron();
 
-const server = app.listen(PORT, () => {
-  console.log(`[Server] Nexachain API server listening on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode.`);
-});
+  const PORT = process.env.PORT || 5000;
+  server = app.listen(PORT, () => {
+    console.log(`[Server] Nexachain API server listening on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode.`);
+  });
+}
 
 // Process event handlers for graceful termination
 process.on('unhandledRejection', (err) => {
