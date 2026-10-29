@@ -33,7 +33,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"mobileNumber\": \"+1987654321\",\n  \"password\": \"password123\",\n  \"referralCode\": \"NXALICE1\"\n}"
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"mobileNumber\": \"+1987654321\",\n  \"password\": \"password123\",\n  \"referralCode\": \"NXAARAV1\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
@@ -69,7 +69,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"alice@nexachain.ai\",\n  \"password\": \"password123\"\n}"
+              "raw": "{\n  \"email\": \"aarav@nexachain.ai\",\n  \"password\": \"password123\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",

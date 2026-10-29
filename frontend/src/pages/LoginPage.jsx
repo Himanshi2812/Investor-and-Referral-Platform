@@ -157,7 +157,7 @@ export const LoginPage = ({ onSwitchToRegister }) => {
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
-              onClick={() => handleDemoFill('alice@nexachain.ai')}
+              onClick={() => handleDemoFill('aarav@nexachain.ai')}
               type="button"
               style={{
                 backgroundColor: currentTheme.bg,
@@ -165,12 +165,12 @@ export const LoginPage = ({ onSwitchToRegister }) => {
               }}
               className="p-2.5 rounded-xl border text-left transition shadow-sm hover:scale-[1.02]"
             >
-              <div className="font-bold text-xs" style={{ color: currentTheme.textPrimary }}>Alice (Root Sponsor)</div>
+              <div className="font-bold text-xs" style={{ color: currentTheme.textPrimary }}>Aarav (Root Sponsor)</div>
               <div className="text-[10px] font-semibold" style={{ color: currentTheme.accent }}>3 Tiers Downlines</div>
             </button>
 
             <button
-              onClick={() => handleDemoFill('bob@nexachain.ai')}
+              onClick={() => handleDemoFill('rohan@nexachain.ai')}
               type="button"
               style={{
                 backgroundColor: currentTheme.bg,
@@ -178,8 +178,8 @@ export const LoginPage = ({ onSwitchToRegister }) => {
               }}
               className="p-2.5 rounded-xl border text-left transition shadow-sm hover:scale-[1.02]"
             >
-              <div className="font-bold text-xs" style={{ color: currentTheme.textPrimary }}>Bob (Level 1)</div>
-              <div className="text-[10px] font-semibold" style={{ color: currentTheme.accent }}>Referred by Alice</div>
+              <div className="font-bold text-xs" style={{ color: currentTheme.textPrimary }}>Rohan (Level 1)</div>
+              <div className="text-[10px] font-semibold" style={{ color: currentTheme.accent }}>Referred by Aarav</div>
             </button>
           </div>
         </div>

@@ -289,14 +289,14 @@ npm run dev
 ```
 
 ### Demo Accounts for Testing
-- **Root Sponsor (Alice):**
-  - Email: `alice@nexachain.ai`
+- **Root Sponsor (Aarav):**
+  - Email: `aarav@nexachain.ai`
   - Password: `password123`
   - *(Has active contracts, 3 tiers of referrals, and past payout logs)*
-- **Downline Member (Bob):**
-  - Email: `bob@nexachain.ai`
+- **Downline Member (Rohan):**
+  - Email: `rohan@nexachain.ai`
   - Password: `password123`
-  - *(Referred directly by Alice)*
+  - *(Referred directly by Aarav)*
 
 ---
 

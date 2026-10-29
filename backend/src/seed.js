@@ -32,11 +32,11 @@ const seedData = async () => {
 
     // 1. Root / Sponsor User: Alice
     const alice = await User.create({
-      fullName: 'Alice Johnson',
-      email: 'alice@nexachain.ai',
-      mobileNumber: '+1234567890',
+      fullName: 'Aarav Sharma',
+      email: 'aarav@nexachain.ai',
+      mobileNumber: '+91 9876543210',
       password: 'password123',
-      referralCode: 'NXALICE1',
+      referralCode: 'NXAARAV1',
       referredBy: null,
       walletBalance: 2450.5,
       totalRoiEarned: 350.5,
@@ -46,11 +46,11 @@ const seedData = async () => {
 
     // 2. Direct downline of Alice: Bob (Level 1 to Alice)
     const bob = await User.create({
-      fullName: 'Bob Smith',
-      email: 'bob@nexachain.ai',
-      mobileNumber: '+1234567891',
+      fullName: 'Rohan Verma',
+      email: 'rohan@nexachain.ai',
+      mobileNumber: '+91 9876543211',
       password: 'password123',
-      referralCode: 'NXBOB222',
+      referralCode: 'NXROHAN2',
       referredBy: alice._id,
       walletBalance: 1200.0,
       totalRoiEarned: 200.0,
@@ -60,11 +60,11 @@ const seedData = async () => {
 
     // 3. Direct downline of Bob: Charlie (Level 2 to Alice, Level 1 to Bob)
     const charlie = await User.create({
-      fullName: 'Charlie Davis',
-      email: 'charlie@nexachain.ai',
-      mobileNumber: '+1234567892',
+      fullName: 'Neha Gupta',
+      email: 'neha@nexachain.ai',
+      mobileNumber: '+91 9876543212',
       password: 'password123',
-      referralCode: 'NXCHAR33',
+      referralCode: 'NXNEHA33',
       referredBy: bob._id,
       walletBalance: 850.0,
       totalRoiEarned: 150.0,
@@ -74,11 +74,11 @@ const seedData = async () => {
 
     // 4. Direct downline of Charlie: David (Level 3 to Alice, Level 2 to Bob, Level 1 to Charlie)
     const david = await User.create({
-      fullName: 'David Wilson',
-      email: 'david@nexachain.ai',
-      mobileNumber: '+1234567893',
+      fullName: 'Vikram Singh',
+      email: 'vikram@nexachain.ai',
+      mobileNumber: '+91 9876543213',
       password: 'password123',
-      referralCode: 'NXDAVE44',
+      referralCode: 'NXVIKRA4',
       referredBy: charlie._id,
       walletBalance: 500.0,
       totalRoiEarned: 50.0,
@@ -88,11 +88,11 @@ const seedData = async () => {
 
     // 5. Direct downline of Alice: Emma (Level 1 to Alice)
     const emma = await User.create({
-      fullName: 'Emma Watson',
-      email: 'emma@nexachain.ai',
-      mobileNumber: '+1234567894',
+      fullName: 'Pooja Patel',
+      email: 'pooja@nexachain.ai',
+      mobileNumber: '+91 9876543214',
       password: 'password123',
-      referralCode: 'NXEMMA55',
+      referralCode: 'NXPOOJA5',
       referredBy: alice._id,
       walletBalance: 3200.0,
       totalRoiEarned: 420.0,
@@ -297,14 +297,14 @@ const seedData = async () => {
     console.log('====================================================');
     console.log('[Seeder] Database successfully seeded with demo data!');
     console.log('Primary Demo Credentials:');
-    console.log('  Email:    alice@nexachain.ai');
+    console.log('  Email:    aarav@nexachain.ai');
     console.log('  Password: password123');
-    console.log('  Referral: NXALICE1');
+    console.log('  Referral: NXAARAV1');
     console.log('Downline accounts:');
-    console.log('  bob@nexachain.ai / password123');
-    console.log('  charlie@nexachain.ai / password123');
-    console.log('  david@nexachain.ai / password123');
-    console.log('  emma@nexachain.ai / password123');
+    console.log('  rohan@nexachain.ai / password123');
+    console.log('  neha@nexachain.ai / password123');
+    console.log('  vikram@nexachain.ai / password123');
+    console.log('  pooja@nexachain.ai / password123');
     console.log('====================================================');
 
     process.exit(0);

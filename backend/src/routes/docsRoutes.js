@@ -43,7 +43,7 @@ router.get('/', (req, res) => {
         <div class="grid md:grid-cols-2 gap-4 text-xs">
           <div>
             <div class="text-gray-400 font-semibold mb-1">Sample Request Body:</div>
-            <pre class="bg-gray-950 p-3 rounded-lg text-gray-300 overflow-x-auto">{\n  "fullName": "Jane Doe",\n  "email": "jane@example.com",\n  "mobileNumber": "+1234567890",\n  "password": "password123",\n  "referralCode": "NXALICE1" // Optional sponsor\n}</pre>
+            <pre class="bg-gray-950 p-3 rounded-lg text-gray-300 overflow-x-auto">{\n  "fullName": "Jane Doe",\n  "email": "jane@example.com",\n  "mobileNumber": "+1234567890",\n  "password": "password123",\n  "referralCode": "NXAARAV1" // Optional sponsor\n}</pre>
           </div>
           <div>
             <div class="text-gray-400 font-semibold mb-1">Sample 201 Response:</div>
@@ -61,11 +61,11 @@ router.get('/', (req, res) => {
         <div class="grid md:grid-cols-2 gap-4 text-xs">
           <div>
             <div class="text-gray-400 font-semibold mb-1">Sample Request Body:</div>
-            <pre class="bg-gray-950 p-3 rounded-lg text-gray-300">{\n  "email": "alice@nexachain.ai",\n  "password": "password123"\n}</pre>
+            <pre class="bg-gray-950 p-3 rounded-lg text-gray-300">{\n  "email": "aarav@nexachain.ai",\n  "password": "password123"\n}</pre>
           </div>
           <div>
             <div class="text-gray-400 font-semibold mb-1">Sample 200 Response:</div>
-            <pre class="bg-gray-950 p-3 rounded-lg text-emerald-400">{\n  "success": true,\n  "data": {\n    "token": "eyJhbGciOi...",\n    "user": { "fullName": "Alice Johnson", ... }\n  }\n}</pre>
+            <pre class="bg-gray-950 p-3 rounded-lg text-emerald-400">{\n  "success": true,\n  "data": {\n    "token": "eyJhbGciOi...",\n    "user": { "fullName": "Aarav Sharma", ... }\n  }\n}</pre>
           </div>
         </div>
       </div>
