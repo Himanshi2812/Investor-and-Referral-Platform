@@ -2,6 +2,23 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export const THEMES = [
   {
+    id: 'pure-white',
+    name: 'Pure White (Clean Corporate)',
+    type: 'light',
+    bg: '#F8FAFC',
+    sidebar: '#FFFFFF',
+    card: '#FFFFFF',
+    border: '#E2E8F0',
+    accent: '#2563EB', // Royal Blue
+    accentHover: '#1D4ED8',
+    accentGradient: 'from-blue-600 to-indigo-600',
+    accentText: 'text-blue-600',
+    textPrimary: '#0F172A',
+    textSecondary: '#64748B',
+    dot: 'bg-blue-600',
+    badgeBg: 'bg-blue-500/10 text-blue-600 border-blue-500/20'
+  },
+  {
     id: 'olive-cream',
     name: 'Olive Green & Cream (Luxury Earth)',
     type: 'light',
@@ -34,23 +51,6 @@ export const THEMES = [
     textSecondary: '#8C5627',
     dot: 'bg-orange-500',
     badgeBg: 'bg-orange-500/10 text-orange-600 border-orange-500/20'
-  },
-  {
-    id: 'pure-white',
-    name: 'Pure White (Clean Corporate)',
-    type: 'light',
-    bg: '#F8FAFC',
-    sidebar: '#FFFFFF',
-    card: '#FFFFFF',
-    border: '#E2E8F0',
-    accent: '#2563EB', // Royal Blue
-    accentHover: '#1D4ED8',
-    accentGradient: 'from-blue-600 to-indigo-600',
-    accentText: 'text-blue-600',
-    textPrimary: '#0F172A',
-    textSecondary: '#64748B',
-    dot: 'bg-blue-600',
-    badgeBg: 'bg-blue-500/10 text-blue-600 border-blue-500/20'
   },
   {
     id: 'midnight-dark',
@@ -92,7 +92,7 @@ const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
   const [currentThemeId, setCurrentThemeId] = useState(() => {
-    return localStorage.getItem('nexachain_theme') || 'olive-cream';
+    return localStorage.getItem('nexachain_theme') || 'pure-white';
   });
 
   const currentTheme = THEMES.find((t) => t.id === currentThemeId) || THEMES[0];
