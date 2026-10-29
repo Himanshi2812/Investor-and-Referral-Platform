@@ -71,42 +71,67 @@ export const CronSimulator = ({ onJobExecuted }) => {
 
       {result && (
         <div
-          className="mt-4 pt-4 border-t animate-fade-in text-xs space-y-2"
+          className="mt-4 pt-4 border-t animate-fade-in text-xs space-y-2.5"
           style={{ borderColor: currentTheme.border }}
         >
           <div className="flex flex-wrap items-center gap-3">
-            <span className="flex items-center text-emerald-500 font-bold">
-              <CheckCircle2 className="w-4 h-4 mr-1.5" />
-              Date: <span className="font-mono ml-1">{result.targetDate}</span>
+            <span
+              style={{
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+                color: currentTheme.textPrimary
+              }}
+              className="flex items-center px-3 py-1.5 rounded-xl border text-xs font-bold"
+            >
+              <CheckCircle2 className="w-4 h-4 mr-1.5 text-emerald-500" />
+              <span>Date:</span>
+              <span className="font-mono ml-1.5 font-bold text-emerald-600 dark:text-emerald-400">{result.targetDate}</span>
             </span>
 
             <span
-              style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.border }}
-              className="px-2.5 py-1 rounded-lg border font-medium"
+              style={{
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+                color: currentTheme.textPrimary
+              }}
+              className="px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center space-x-1.5"
             >
-              Processed: <strong className="text-emerald-500 font-mono">{result.processedCount}</strong>
+              <span>Processed:</span>
+              <strong className="text-emerald-600 dark:text-emerald-400 font-mono text-sm">{result.processedCount}</strong>
             </span>
 
             <span
-              style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.border }}
-              className="px-2.5 py-1 rounded-lg border font-medium"
+              style={{
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+                color: currentTheme.textPrimary
+              }}
+              className="px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center space-x-1.5"
             >
-              Skipped / Already Credited: <strong className="text-amber-500 font-mono">{result.skippedCount}</strong>
+              <span>Skipped / Already Credited:</span>
+              <strong className="text-amber-600 dark:text-amber-400 font-mono text-sm">{result.skippedCount}</strong>
             </span>
 
             <span
-              style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.border }}
-              className="px-2.5 py-1 rounded-lg border font-medium"
+              style={{
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+                color: currentTheme.textPrimary
+              }}
+              className="px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center space-x-1.5"
             >
-              Total Distributed: <strong className="font-mono">${result.totalRoiDistributed}</strong>
+              <span>Total Distributed:</span>
+              <strong className="font-mono text-sm" style={{ color: currentTheme.textPrimary }}>
+                ${result.totalRoiDistributed}
+              </strong>
             </span>
           </div>
 
           {result.skippedCount > 0 && result.processedCount === 0 && (
-            <div className="flex items-center space-x-2 text-amber-600 bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl">
-              <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-500" />
+            <div className="flex items-center space-x-2 text-amber-700 dark:text-amber-300 bg-amber-500/15 border border-amber-500/30 p-3 rounded-xl font-medium text-xs leading-relaxed">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>
-                <strong>Idempotency Safeguard Active:</strong> ROI for date {result.targetDate} has already been credited. Duplicate payout was successfully prevented!
+                <strong className="font-bold">Idempotency Safeguard Active:</strong> ROI for date {result.targetDate} has already been credited. Duplicate payout was successfully prevented!
               </span>
             </div>
           )}
