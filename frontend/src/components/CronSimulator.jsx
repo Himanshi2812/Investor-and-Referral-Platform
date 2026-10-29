@@ -40,7 +40,7 @@ export const CronSimulator = ({ onJobExecuted }) => {
               <Clock className="w-4 h-4" />
             </span>
             <h4 className="text-sm font-bold tracking-wide" style={{ color: currentTheme.textPrimary }}>
-              Automated Scheduler & Idempotency Testing Console (Task 5)
+              Automated Scheduler & Idempotency Testing Console
             </h4>
             <span
               className="text-[10px] font-mono px-2 py-0.5 rounded border font-semibold"

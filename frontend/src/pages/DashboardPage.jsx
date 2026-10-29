@@ -223,7 +223,7 @@ export const DashboardPage = () => {
                   className="text-xl font-black"
                   style={{ color: currentTheme.textPrimary }}
                 >
-                  Cron Scheduler & Idempotency Testing Lab (Task 5)
+                  Cron Scheduler & Idempotency Testing Lab
                 </h2>
                 <p className="text-xs mt-0.5" style={{ color: currentTheme.textSecondary }}>
                   Automated background job running every midnight at 12:00 AM (0 0 * * *). Test and verify idempotency live below.

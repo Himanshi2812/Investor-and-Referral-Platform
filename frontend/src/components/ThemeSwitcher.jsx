@@ -24,7 +24,9 @@ export const ThemeSwitcher = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border transition text-xs font-bold shadow-md hover:scale-105"
+        aria-label="Change Color Theme"
+        title={`Theme: ${currentTheme.name}`}
+        className="relative p-2.5 rounded-xl border transition shadow-sm hover:scale-105 active:scale-95 flex items-center justify-center"
         style={{
           backgroundColor: currentTheme.card,
           borderColor: currentTheme.border,
@@ -32,12 +34,9 @@ export const ThemeSwitcher = () => {
         }}
       >
         <Palette className="w-4 h-4" style={{ color: currentTheme.accent }} />
-        <span className="hidden sm:inline opacity-70 font-medium">Palette:</span>
-        <span className="flex items-center space-x-1.5">
-          <span className={`w-3 h-3 rounded-full border border-black/10 shadow-sm ${currentTheme.dot}`}></span>
-          <span className="font-extrabold">{currentTheme.name.split(' (')[0]}</span>
-        </span>
-        <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+        <span
+          className={`absolute bottom-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900 ${currentTheme.dot}`}
+        />
       </button>
 
       {isOpen && (
